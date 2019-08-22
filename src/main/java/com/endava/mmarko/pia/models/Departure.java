@@ -10,14 +10,26 @@ public class Departure {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @ManyToOne
-    @JoinColumn(name = "tour_guide_id")
-    private TourGuide guide;
+    @JoinColumn(name = "tour_id")
+    Tour Tour;
+    @ManyToOne
+    @JoinColumn(name = "guide_id")
+    private Guide guide;
     private Date date;
+
+    public Departure() {}
+
+    public Departure(Tour tour, Guide guide, Date date) {
+        Tour = tour;
+        this.guide = guide;
+        this.date = date;
+    }
 
     @Override
     public String toString() {
         return "Departure{" +
-                "guide=" + guide +
+                "Tour=" + Tour +
+                ", guide=" + guide +
                 ", date=" + date +
                 '}';
     }
@@ -30,11 +42,19 @@ public class Departure {
         this.id = id;
     }
 
-    public TourGuide getGuide() {
+    public com.endava.mmarko.pia.models.Tour getTour() {
+        return Tour;
+    }
+
+    public void setTour(com.endava.mmarko.pia.models.Tour tour) {
+        Tour = tour;
+    }
+
+    public Guide getGuide() {
         return guide;
     }
 
-    public void setGuide(TourGuide guide) {
+    public void setGuide(Guide guide) {
         this.guide = guide;
     }
 

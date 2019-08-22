@@ -27,7 +27,9 @@ public class DepartureController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Departure departure(@PathVariable int id) {
         Departure departure = departureService.find(id);
-        if(departure == null) throw new ResourceNotFoundError("No such Departure exists");
+        if(departure == null) {
+            throw new ResourceNotFoundError("No such Departure exists");
+        }
         return departure;
     }
 
@@ -46,7 +48,9 @@ public class DepartureController {
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     public ResponseEntity<Departure> save(@RequestBody Departure d, UriComponentsBuilder ucb){
         Departure created = departureService.save(d);
-        if(created==null) throw new CreationConflictError("Departure Already Exists");
+        if(created==null) {
+            throw new CreationConflictError("Departure Already Exists");
+        }
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(ucb.path("/departures/").

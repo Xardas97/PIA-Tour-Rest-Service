@@ -3,7 +3,6 @@ package com.endava.mmarko.pia.controllers;
 import com.endava.mmarko.pia.config.TestConfig;
 import com.endava.mmarko.pia.config.WebConfig;
 import com.endava.mmarko.pia.models.Departure;
-import com.endava.mmarko.pia.models.Tour;
 import com.endava.mmarko.pia.models.User;
 import com.endava.mmarko.pia.services.DepartureService;
 import com.endava.mmarko.pia.services.TourService;
@@ -21,7 +20,6 @@ import static org.hamcrest.core.Is.*;
 import static com.endava.mmarko.pia.controllers.ControllerTestUtil.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -36,6 +34,8 @@ import java.util.List;
 @ContextConfiguration(classes = {WebConfig.class, TestConfig.class})
 @WebAppConfiguration
 public class UserControllerTest {
+    private static final int ID = 5;
+
     private MockMvc mockMvc;
     @Autowired
     private UserService userService;
@@ -54,8 +54,8 @@ public class UserControllerTest {
         Departure dep2 = new Departure(); dep2.setDate(date);
         departures.add(dep1);  departures.add(dep2);
 
-        when(departureService.findByGuide("username")).thenReturn(departures);
-        mockMvc.perform(get("/users/{username}/departures", "username"))
+        when(departureService.findByGuide(ID)).thenReturn(departures);
+        mockMvc.perform(get("/users/{ID}/departures", ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
                 .andExpect(jsonPath("$", Matchers.hasSize(2)))
@@ -64,30 +64,8 @@ public class UserControllerTest {
     }
 
     @Test
-    public void toursByGuideTest() throws Exception {
-        List<Tour> tours = new LinkedList<>();
-        Tour tour1 = new Tour("name1", "description1", "point1", 1);
-        Tour tour2 = new Tour("name2", "description2", "point2", 2);
-        tours.add(tour1); tours.add(tour2);
-
-        when(tourService.findByGuide("username")).thenReturn(tours);
-        mockMvc.perform(get("/users/{username}/tours", "username"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(JSON_CONTENT_TYPE))
-                .andExpect(jsonPath("$", Matchers.hasSize(2)))
-                .andExpect(jsonPath("$[0].name", is("name1")))
-                .andExpect(jsonPath("$[0].description", is("description1")))
-                .andExpect(jsonPath("$[0].meetingPoint", is("point1")))
-                .andExpect(jsonPath("$[0].minPeople", is(1)))
-                .andExpect(jsonPath("$[1].name", is("name2")))
-                .andExpect(jsonPath("$[1].description", is("description2")))
-                .andExpect(jsonPath("$[1].meetingPoint", is("point2")))
-                .andExpect(jsonPath("$[1].minPeople", is(2)));
-    }
-
-    @Test
     public void saveConflictTest() throws Exception {
-        User user = new User("username", "password", (short) 10, "firstName", "lastName");
+        User user = new User("username", "password", true, "firstName", "lastName");
 
         byte[] unsavedJsonBytes = new ObjectMapper().
                 setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsBytes(user);
@@ -104,7 +82,7 @@ public class UserControllerTest {
 
     @Test
     public void saveTest() throws Exception {
-        User user = new User("username", "password", (short) 10, "firstName", "lastName");
+        User user = new User("username", "password", true, "firstName", "lastName");
 
         byte[] unsavedJsonBytes = new ObjectMapper().
                 setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsBytes(user);
@@ -118,31 +96,31 @@ public class UserControllerTest {
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
                 .andExpect(jsonPath("$.username", is("username")))
                 .andExpect(jsonPath("$.password", is("password")))
-                .andExpect(jsonPath("$.type", is(10)))
+                .andExpect(jsonPath("$.guide", is(true)))
                 .andExpect(jsonPath("$.firstName", is("firstName")))
                 .andExpect(jsonPath("$.lastName", is("lastName")));
     }
 
     @Test
     public void deleteTest() throws Exception {
-        mockMvc.perform(delete("/users/{username}", "username" ))
+        mockMvc.perform(delete("/users/{userId}", ID))
                 .andExpect(status().isOk());
 
-        verify(userService, times(1)).delete("username");
+        verify(userService, times(1)).delete(ID);
     }
 
     @Test
     public void userTest() throws Exception {
-        User user = new User("username", "password", (short) 10, "firstName", "lastName");
+        User user = new User("username", "password", true, "firstName", "lastName");
 
-        when(userService.find("username")).thenReturn(user);
+        when(userService.find(ID)).thenReturn(user);
 
-        mockMvc.perform(get("/users/{username}", "username"))
+        mockMvc.perform(get("/users/{ID}", ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
                 .andExpect(jsonPath("$.username", is("username")))
                 .andExpect(jsonPath("$.password", is("")))
-                .andExpect(jsonPath("$.type", is(10)))
+                .andExpect(jsonPath("$.guide", is(true)))
                 .andExpect(jsonPath("$.firstName", is("firstName")))
                 .andExpect(jsonPath("$.lastName", is("lastName")));
     }
@@ -150,8 +128,8 @@ public class UserControllerTest {
     @Test
     public void usersTest() throws Exception {
         List<User> users = new LinkedList<>();
-        User user1 = new User("username", "password", (short) 10, "firstName", "lastName");
-        User user2 = new User("username2", "password2", (short) 11, "firstName2", "lastName2");
+        User user1 = new User("username", "password", false, "firstName", "lastName");
+        User user2 = new User("username2", "password2", false, "firstName2", "lastName2");
         users.add(user1);
         users.add(user2);
 
@@ -163,12 +141,12 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$", Matchers.hasSize(2)))
                 .andExpect(jsonPath("$[0].username", is("username")))
                 .andExpect(jsonPath("$[0].password", is("password")))
-                .andExpect(jsonPath("$[0].type", is(10)))
+                .andExpect(jsonPath("$[0].guide", is(false)))
                 .andExpect(jsonPath("$[0].firstName", is("firstName")))
                 .andExpect(jsonPath("$[0].lastName", is("lastName")))
                 .andExpect(jsonPath("$[1].username", is("username2")))
                 .andExpect(jsonPath("$[1].password", is("password2")))
-                .andExpect(jsonPath("$[1].type", is(11)))
+                .andExpect(jsonPath("$[1].guide", is(false)))
                 .andExpect(jsonPath("$[1].firstName", is("firstName2")))
                 .andExpect(jsonPath("$[1].lastName", is("lastName2")));
     }

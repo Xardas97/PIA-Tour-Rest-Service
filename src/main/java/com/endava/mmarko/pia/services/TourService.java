@@ -25,8 +25,4 @@ public class TourService {
     public void delete(Integer id) {
         tourRepo.delete(id);
     }
-
-    public List<Tour> findByGuide(String guide){
-        return tourRepo.findByGuide(guide);
-    }
 }

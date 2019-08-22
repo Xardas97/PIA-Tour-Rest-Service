@@ -11,13 +11,22 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name = "departure_id")
     private Departure departure;
-    private String client;
+    @ManyToOne
+    @JoinColumn(name = "client_id")
+    private User client;
+
+    public Reservation() {}
+
+    public Reservation(Departure departure, User client) {
+        this.departure = departure;
+        this.client = client;
+    }
 
     @Override
     public String toString() {
         return "Reservation{" +
                 "departure=" + departure +
-                ", client='" + client + '\'' +
+                ", client=" + client +
                 '}';
     }
 
@@ -37,11 +46,11 @@ public class Reservation {
         this.departure = departure;
     }
 
-    public String getClient() {
+    public User getClient() {
         return client;
     }
 
-    public void setClient(String client) {
+    public void setClient(User client) {
         this.client = client;
     }
 }

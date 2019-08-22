@@ -25,7 +25,9 @@ public class DepartureService {
     }
 
     public Departure save(Departure d){
-        if(departureRepo.findByGuideAndDate(d.getGuide(), d.getDate())!=null) return null;
+        if (departureRepo.findByGuideAndDate(d.getGuide(), d.getDate()) != null) {
+            return null;
+        }
         return departureRepo.save(d);
     }
 
@@ -39,13 +41,15 @@ public class DepartureService {
 
     public Boolean hasEnoughPeople(Integer id) throws ResourceNotFoundError {
         Departure departure = departureRepo.findOne(id);
-        if(departure == null) throw new ResourceNotFoundError();
-        int minPeople = departure.getGuide().getTour().getMinPeople();
+        if (departure == null) {
+            throw new ResourceNotFoundError();
+        }
+        int minPeople = departure.getTour().getMinPeople();
         int reserved = reservationRepo.countByDeparture(departure);
-        return reserved>=minPeople;
+        return reserved >= minPeople;
     }
 
-    public List<Departure> findByGuide(String guide){
-        return departureRepo.findByGuide(guide);
+    public List<Departure> findByGuide(Integer guideId){
+        return departureRepo.findByGuide(guideId);
     }
 }

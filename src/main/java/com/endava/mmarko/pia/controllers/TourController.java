@@ -22,7 +22,9 @@ public class TourController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Tour tour(@PathVariable int id){
         Tour tour = tourService.find(id);
-        if(tour == null) throw new ResourceNotFoundError("No such Tour exists.");
+        if(tour == null) {
+            throw new ResourceNotFoundError("No such Tour exists.");
+        }
         return tour;
     }
 
@@ -45,7 +47,9 @@ public class TourController {
    @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     public ResponseEntity<Tour> save(@RequestBody Tour tour, UriComponentsBuilder ucb){
        Tour created = tourService.save(tour);
-       if(created == null) throw new CreationConflictError();
+       if(created == null) {
+           throw new CreationConflictError();
+       }
 
        HttpHeaders headers = new HttpHeaders();
        headers.setLocation(ucb.path("/tours/").

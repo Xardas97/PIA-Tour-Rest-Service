@@ -29,6 +29,8 @@ import java.util.List;
 @ContextConfiguration(classes = {WebConfig.class, TestConfig.class})
 @WebAppConfiguration
 public class TourControllerTest {
+    private static final int ID = 5;
+    
     private MockMvc mockMvc;
     @Autowired
     private TourService tourService;
@@ -37,10 +39,10 @@ public class TourControllerTest {
 
     @Test
     public void deleteTest() throws Exception {
-        mockMvc.perform(delete("/tours/{id}", 10 ))
+        mockMvc.perform(delete("/tours/{id}", ID ))
                 .andExpect(status().isOk());
 
-        verify(tourService, times(1)).delete(10);
+        verify(tourService, times(1)).delete(ID);
     }
 
     @Test
@@ -52,12 +54,12 @@ public class TourControllerTest {
 
         when(tourService.save(any())).thenAnswer(i -> i.getArguments()[0]);
 
-        mockMvc.perform(put("/tours/{id}", 10 )
+        mockMvc.perform(put("/tours/{id}", ID )
                 .contentType(JSON_CONTENT_TYPE)
                 .content(unsavedJsonBytes))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
-                .andExpect(jsonPath("$.id", is(10)))
+                .andExpect(jsonPath("$.id", is(ID)))
                 .andExpect(jsonPath("$.name", is("name")))
                 .andExpect(jsonPath("$.description", is("description")))
                 .andExpect(jsonPath("$.meetingPoint", is("point")))
@@ -71,7 +73,7 @@ public class TourControllerTest {
         byte[] unsavedJsonBytes = new ObjectMapper().
                 setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsBytes(tour);
 
-        tour.setId(10);
+        tour.setId(ID);
         when(tourService.save(any())).thenReturn(tour);
 
         mockMvc.perform(post("/tours" )
@@ -79,7 +81,7 @@ public class TourControllerTest {
                 .content(unsavedJsonBytes))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
-                .andExpect(jsonPath("$.id", is(10)))
+                .andExpect(jsonPath("$.id", is(ID)))
                 .andExpect(jsonPath("$.name", is("name")))
                 .andExpect(jsonPath("$.description", is("description")))
                 .andExpect(jsonPath("$.meetingPoint", is("point")))

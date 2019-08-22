@@ -31,6 +31,8 @@ import java.util.List;
 @ContextConfiguration(classes = {WebConfig.class, TestConfig.class})
 @WebAppConfiguration
 public class DepartureControllerTest {
+    private static final int ID = 5;
+    
     private MockMvc mockMvc;
     @Autowired
     private DepartureService departureService;
@@ -38,29 +40,29 @@ public class DepartureControllerTest {
     private WebApplicationContext context;
 
     @Test
-    public void hasEnoughPeopleTest() throws Exception {
-        int id = 5;
-
-        when(departureService.hasEnoughPeople(id)).thenReturn(true);
-        mockMvc.perform(get("/departures/{id}/has_enough_people", id))
+    public void hasEnoughPeopleReturnsTrueTest() throws Exception {
+        when(departureService.hasEnoughPeople(ID)).thenReturn(true);
+        mockMvc.perform(get("/departures/{id}/has_enough_people", ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
                 .andExpect(jsonPath("$", is(true)));
+    }
 
-        when(departureService.hasEnoughPeople(id)).thenReturn(false);
-        mockMvc.perform(get("/departures/{id}/has_enough_people", id))
+    @Test
+    public void hasEnoughPeopleReturnsFalseTest() throws Exception {
+        when(departureService.hasEnoughPeople(ID)).thenReturn(false);
+        mockMvc.perform(get("/departures/{id}/has_enough_people", ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
                 .andExpect(jsonPath("$", is(false)));
-
     }
 
     @Test
     public void deleteTest() throws Exception {
-        mockMvc.perform(delete("/departures/{id}", 10 ))
+        mockMvc.perform(delete("/departures/{id}", ID ))
                 .andExpect(status().isOk());
 
-        verify(departureService, times(1)).delete(10);
+        verify(departureService, times(1)).delete(ID);
     }
 
     @Test
@@ -73,12 +75,12 @@ public class DepartureControllerTest {
 
         when(departureService.update(any())).thenAnswer(i -> i.getArguments()[0]);
 
-        mockMvc.perform(put("/departures/{id}", 10 )
+        mockMvc.perform(put("/departures/{id}", ID )
                 .contentType(JSON_CONTENT_TYPE)
                 .content(unsavedJsonBytes))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
-                .andExpect(jsonPath("$.id", is(10)))
+                .andExpect(jsonPath("$.id", is(ID)))
                 .andExpect(jsonPath("$.date", is(date.getTime())));
     }
 
@@ -90,7 +92,7 @@ public class DepartureControllerTest {
         byte[] unsavedJsonBytes = new ObjectMapper().
                 setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsBytes(dep);
 
-        dep.setId(10);
+        dep.setId(ID);
         when(departureService.save(any())).thenReturn(dep);
 
         mockMvc.perform(post("/departures" )
@@ -98,7 +100,7 @@ public class DepartureControllerTest {
                 .content(unsavedJsonBytes))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
-                .andExpect(jsonPath("$.id", is(10)))
+                .andExpect(jsonPath("$.id", is(ID)))
                 .andExpect(jsonPath("$.date", is(date.getTime())));
     }
 
@@ -124,9 +126,9 @@ public class DepartureControllerTest {
     public void departureTest() throws Exception {
         Date date = new Date();
         Departure dep = new Departure(); dep.setDate(date);
-        when(departureService.find(1)).thenReturn(dep);
+        when(departureService.find(ID)).thenReturn(dep);
 
-        mockMvc.perform(get("/departures/{id}", 1))
+        mockMvc.perform(get("/departures/{id}", ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
                 .andExpect(jsonPath("$.date", is(date.getTime())));
@@ -137,7 +139,7 @@ public class DepartureControllerTest {
         Date date = new Date();
         Departure dep = new Departure(); dep.setDate(date);
 
-        mockMvc.perform(get("/departures/{id}", 1))
+        mockMvc.perform(get("/departures/{id}", ID))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
                 .andExpect(jsonPath("$.code", is(3)));

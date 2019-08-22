@@ -1,6 +1,7 @@
 package com.endava.mmarko.pia.models;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "tours")
@@ -14,9 +15,10 @@ public class Tour {
     private String meetingPoint;
     @Column(name = "min_people")
     private int minPeople;
+    @ManyToMany(mappedBy = "myTours", fetch = FetchType.EAGER)
+    private List<Guide> myGuides;
 
-    public Tour() {
-    }
+    public Tour() {}
 
     public Tour(String name, String description, String meetingPoint, int minPeople) {
         this.name = name;
@@ -29,6 +31,8 @@ public class Tour {
     public String toString() {
         return "Tour{" +
                 "name='" + name + '\'' +
+                ", meetingPoint='" + meetingPoint + '\'' +
+                ", minPeople=" + minPeople +
                 '}';
     }
 
@@ -70,5 +74,13 @@ public class Tour {
 
     public void setMinPeople(int minPeople) {
         this.minPeople = minPeople;
+    }
+
+    public List<Guide> getMyGuides() {
+        return myGuides;
+    }
+
+    public void setMyGuides(List<Guide> myGuides) {
+        this.myGuides = myGuides;
     }
 }

@@ -1,7 +1,9 @@
 package com.endava.mmarko.pia.services;
 
 import com.endava.mmarko.pia.config.PiaConfig;
+import com.endava.mmarko.pia.models.Departure;
 import com.endava.mmarko.pia.models.Reservation;
+import com.endava.mmarko.pia.models.User;
 import com.endava.mmarko.pia.repositories.ReservationRepo;
 import org.junit.Assert;
 import org.junit.Before;
@@ -10,17 +12,20 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Matchers;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.LinkedList;
+import java.util.Arrays;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = PiaConfig.class)
 public class ReservationServiceTest {
+
+    private static final String USERNAME = "username";
+    private static final int USER_ID = 5;
+    private static final int RES_ID = 6;
 
     @Mock
     ReservationRepo reservationRepo;
@@ -30,65 +35,94 @@ public class ReservationServiceTest {
 
     @Test
     public void findNotAllowedTest() {
-        int id = 5; String username = "username1";
-        String differentUsername = "username2";
+        User user = new User();
+        user.setUsername(USERNAME);
 
-        Reservation res = new Reservation();
-        res.setId(id); res.setClient(username);
+        User differentUser = new User();
+        differentUser.setUsername(USERNAME + "1");
 
-        Mockito.when(reservationRepo.findOne(id)).thenReturn(res);
-        Assert.assertEquals(reservationService.find(differentUsername, id), null);
+        Reservation reservation = new Reservation();
+        reservation.setId(RES_ID);
+        reservation.setClient(user);
+
+        Mockito.when(reservationRepo.findOne(RES_ID)).thenReturn(reservation);
+
+        Assert.assertNull(reservationService.find(USER_ID+1, RES_ID));
+
+        Mockito.verify(reservationRepo, Mockito.times(1)).findOne(RES_ID);
+        Mockito.verifyNoMoreInteractions(reservationRepo);
     }
 
     @Test
     public void findAllowedTest() {
-        int id = 5; String username = "username1";
+        User user = new User();
+        user.setId(USER_ID);
 
-        Reservation res = new Reservation();
-        res.setId(id); res.setClient(username);
+        Reservation reservation = new Reservation();
+        reservation.setId(RES_ID);
+        reservation.setClient(user);
 
-        Mockito.when(reservationRepo.findOne(id)).thenReturn(res);
-        Assert.assertEquals(reservationService.find(username, id), res);
+        Mockito.when(reservationRepo.findOne(RES_ID)).thenReturn(reservation);
+        Assert.assertEquals(reservation, reservationService.find(USER_ID, RES_ID));
+
+        Mockito.verify(reservationRepo, Mockito.times(1)).findOne(RES_ID);
+        Mockito.verifyNoMoreInteractions(reservationRepo);
     }
 
     @Test
     public void deleteTest(){
-        reservationService.delete("username", 1);
-        Mockito.verify(reservationRepo, Mockito.times(1)).deleteByClientAndId("username", 1);
+        reservationService.delete(USER_ID, RES_ID);
+
+        Mockito.verify(reservationRepo, Mockito.times(1)).deleteByClientAndId(USER_ID, RES_ID);
+        Mockito.verifyNoMoreInteractions(reservationRepo);
     }
 
     @Test
     public void findByClientTest(){
-        String client = "client";
-        Reservation res1 = new Reservation(); Reservation res2 = new Reservation();
-        res1.setClient(client); res2.setClient(client);
-        List<Reservation> expected = new LinkedList<>(); expected.add(res1); expected.add(res2);
+        List<Reservation> expected = Arrays.asList(new Reservation(), new Reservation());
 
-        Mockito.when(reservationRepo.findByClient(client)).thenReturn(expected);
+        Mockito.when(reservationRepo.findByClient(USER_ID)).thenReturn(expected);
 
-        Assert.assertEquals(reservationService.findByClient(client), expected);
+        Assert.assertEquals(expected, reservationService.findByClient(USER_ID));
+
+        Mockito.verify(reservationRepo, Mockito.times(1)).findByClient(USER_ID);
+        Mockito.verifyNoMoreInteractions(reservationRepo);
     }
 
     @Test
     public void saveImpossibleTest(){
-        Reservation unsaved = new Reservation();
-        Reservation saved = new Reservation(); saved.setId(10);
+        Departure departure = new Departure();
+        User client = new User();
 
-        Mockito.when(reservationRepo.findByDepartureAndClient(Matchers.any(), Matchers.any())).thenReturn(new Reservation());
-        Mockito.when(reservationRepo.save(unsaved)).thenReturn(saved);
+        Reservation unsaved = new Reservation(departure, client);
+        Reservation saved = new Reservation(departure, client);
+        saved.setId(RES_ID);
 
-        Assert.assertEquals(reservationService.save(unsaved), null);
+        Mockito.when(reservationRepo.findByDepartureAndClient(departure, client)).thenReturn(new Reservation());
+
+        Assert.assertNull(reservationService.save(unsaved));
+
+        Mockito.verify(reservationRepo, Mockito.times(1)).findByDepartureAndClient(departure, client);
+        Mockito.verifyNoMoreInteractions(reservationRepo);
     }
 
     @Test
     public void savePossibleTest(){
-        Reservation unsaved = new Reservation();
-        Reservation saved = new Reservation(); saved.setId(10);
+        Departure departure = new Departure();
+        User client = new User();
 
-        Mockito.when(reservationRepo.findByDepartureAndClient(Matchers.any(), Matchers.any())).thenReturn(null);
+        Reservation unsaved = new Reservation(departure, client);
+        Reservation saved = new Reservation(departure, client);
+        saved.setId(RES_ID);
+
+        Mockito.when(reservationRepo.findByDepartureAndClient(departure, client)).thenReturn(null);
         Mockito.when(reservationRepo.save(unsaved)).thenReturn(saved);
 
-        Assert.assertEquals(reservationService.save(unsaved), saved);
+        Assert.assertEquals(saved, reservationService.save(unsaved));
+
+        Mockito.verify(reservationRepo, Mockito.times(1)).findByDepartureAndClient(departure, client);
+        Mockito.verify(reservationRepo, Mockito.times(1)).save(unsaved);
+        Mockito.verifyNoMoreInteractions(reservationRepo);
     }
 
     @Before

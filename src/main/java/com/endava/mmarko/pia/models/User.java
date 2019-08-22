@@ -1,6 +1,5 @@
 package com.endava.mmarko.pia.models;
 
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -10,21 +9,21 @@ import javax.persistence.Table;
 @Table(name = "users")
 public class User {
     @Id
+    private int id;
     private String username;
     private String password;
-    private short type; //0-guide, 1-client
+    private boolean guide;
     @Column(name = "first_name")
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
 
-    public User() {
-    }
+    public User() { }
 
-    public User(String username, String password, short type, String firstName, String lastName) {
+    public User(String username, String password, boolean guide, String firstName, String lastName) {
         this.username = username;
         this.password = password;
-        this.type = type;
+        this.guide = guide;
         this.firstName = firstName;
         this.lastName = lastName;
     }
@@ -35,6 +34,14 @@ public class User {
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 '}';
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -53,12 +60,12 @@ public class User {
         this.password = password;
     }
 
-    public short getType() {
-        return type;
+    public boolean isGuide() {
+        return guide;
     }
 
-    public void setType(short type) {
-        this.type = type;
+    public void setGuide(boolean guide) {
+        this.guide = guide;
     }
 
     public String getFirstName() {

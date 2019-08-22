@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
@@ -15,12 +16,14 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.LinkedList;
+import java.util.Arrays;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = PiaConfig.class)
 public class TourServiceTest {
+    private static final int ID = 5;
+
     @Mock
     private TourRepo tourRepo;
 
@@ -28,53 +31,49 @@ public class TourServiceTest {
     private TourService tourService;
 
     @Test
-    public void findByGuideTest() {
-        List<Tour> expected = new LinkedList<>();
-        expected.add(new Tour()); expected.add(new Tour());
-
-        when(tourRepo.findByGuide("guide")).thenReturn(expected);
-
-        assertEquals(tourService.findByGuide("guide"), expected);
-    }
-
-    @Test
     public void deleteTest(){
-        tourService.delete(1);
-        verify(tourRepo, times(1)).delete(1);
+        tourService.delete(ID);
+        verify(tourRepo, times(1)).delete(ID);
+        verifyNoMoreInteractions(tourRepo);
     }
 
     @Test
     public void findAllTest(){
-        List<Tour> expected = new LinkedList<>();
-        expected.add(new Tour()); expected.add(new Tour());
+        List<Tour> expected = Arrays.asList(new Tour(), new Tour());
 
         when(tourRepo.findAll()).thenReturn(expected);
 
-        assertEquals(tourService.findAll(), expected);
+        assertEquals(expected, tourService.findAll());
+
+        verify(tourRepo, times(1)).findAll();
+        verifyNoMoreInteractions(tourRepo);
     }
 
     @Test
     public void findTest(){
-        int id = 5;
-        Tour expected = new Tour(); expected.setId(id);
+        Tour expected = new Tour();
+        expected.setId(ID);
 
-        when(tourRepo.findOne(id)).thenReturn(expected);
+        when(tourRepo.findOne(ID)).thenReturn(expected);
 
-        assertEquals(expected.getId(), tourService.find(id).getId());
+        assertEquals(expected, tourService.find(ID));
+
+        verify(tourRepo, times(1)).findOne(ID);
+        verifyNoMoreInteractions(tourRepo);
     }
 
     @Test
     public void saveTest() {
+        Tour unsaved = new Tour("name", "description", "point", 1);
+        Tour saved =  new Tour("name", "description", "point", 1);
+        saved.setId(10);
 
-        Tour unsavedTour = new Tour("name", "description", "point", 1);
+        when(tourRepo.save(unsaved)).thenReturn(saved);
 
-        Tour savedTour = new Tour(unsavedTour.getName(), unsavedTour.getDescription(), unsavedTour.getMeetingPoint(), unsavedTour.getMinPeople());
-        savedTour.setId(10);
+        assertEquals(saved, tourService.save(unsaved));
 
-        when(tourRepo.save(unsavedTour)).thenReturn(savedTour);
-
-        Tour returnedTour = tourService.save(unsavedTour);
-        assertEquals(returnedTour, savedTour);
+        verify(tourRepo, times(1)).save(unsaved);
+        verifyNoMoreInteractions(tourRepo);
     }
 
     @Before

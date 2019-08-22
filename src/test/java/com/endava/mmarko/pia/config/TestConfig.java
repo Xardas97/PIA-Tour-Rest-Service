@@ -2,10 +2,7 @@ package com.endava.mmarko.pia.config;
 
 import com.endava.mmarko.pia.errors.GlobalExceptionHandler;
 import com.endava.mmarko.pia.repositories.*;
-import com.endava.mmarko.pia.services.DepartureService;
-import com.endava.mmarko.pia.services.ReservationService;
-import com.endava.mmarko.pia.services.TourService;
-import com.endava.mmarko.pia.services.UserService;
+import com.endava.mmarko.pia.services.*;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +28,12 @@ public class TestConfig {
     public UserService userService() {
         return Mockito.mock(UserService.class);
     }
+
+    @Bean
+    public GuideService guideService() {
+        return Mockito.mock(GuideService.class);
+    }
+
     @Bean
     public TourRepo tourRepo() {
         return Mockito.mock(TourRepo.class);
@@ -47,8 +50,13 @@ public class TestConfig {
     }
 
     @Bean
-    public UserAutoRepo userRepo() {
-        return Mockito.mock(UserAutoRepo.class);
+    public UserRepo userRepo() {
+        return Mockito.mock(UserRepo.class);
+    }
+
+    @Bean
+    public GuideRepo guideRepo() {
+        return Mockito.mock(GuideRepo.class);
     }
 
     @Bean

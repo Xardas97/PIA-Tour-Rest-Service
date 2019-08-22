@@ -14,31 +14,35 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users/{username}/reservations")
+@RequestMapping("/users/{userId}/reservations")
 public class ReservationController {
     @Autowired
     private ReservationService reservationService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<Reservation> reservations(@PathVariable String username){
-        return reservationService.findByClient(username);
+    public List<Reservation> reservations(@PathVariable int userId){
+        return reservationService.findByClient(userId);
     }
 
-    @RequestMapping(value = "/{id}",method = RequestMethod.GET)
-    public Reservation reservation(@PathVariable String username, @PathVariable int id){
-        Reservation r = reservationService.find(username, id);
-        if(r==null) throw new ResourceNotFoundError("Reservation with that ID doesn't exist or doesn't belong to that user");
+    @RequestMapping(value = "/{resId}",method = RequestMethod.GET)
+    public Reservation reservation(@PathVariable int userId, @PathVariable int resId){
+        Reservation r = reservationService.find(userId, resId);
+        if(r==null) {
+            throw new ResourceNotFoundError("Reservation with that ID doesn't exist or doesn't belong to that user");
+        }
         return r;
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     public ResponseEntity<Reservation> save(@RequestBody Reservation r, UriComponentsBuilder ucb){
         Reservation created = reservationService.save(r);
-        if(created==null) throw new CreationConflictError();
+        if(created==null) {
+            throw new CreationConflictError();
+        }
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(ucb.path("//users/").
-                path(created.getClient()).
+                path(Integer.toString(created.getClient().getId())).
                 path("/reservations/").
                 path(Integer.toString(created.getId())).
                 build().toUri());
@@ -46,14 +50,14 @@ public class ReservationController {
         return new ResponseEntity<>(created, headers, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public Reservation update(@RequestBody Reservation res, @PathVariable int id){
-        res.setId(id);
+    @RequestMapping(value = "/{resId}", method = RequestMethod.PUT)
+    public Reservation update(@RequestBody Reservation res, @PathVariable int resId){
+        res.setId(resId);
         return reservationService.save(res);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public void delete(@PathVariable String username, @PathVariable int id) {
-        reservationService.delete(username, id);
+    @RequestMapping(value = "/{resId}", method = RequestMethod.DELETE)
+    public void delete(@PathVariable Integer userId, @PathVariable int resId) {
+        reservationService.delete(userId, resId);
     }
 }

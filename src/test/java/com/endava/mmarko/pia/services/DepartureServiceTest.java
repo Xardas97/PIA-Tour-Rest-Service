@@ -3,8 +3,8 @@ package com.endava.mmarko.pia.services;
 import com.endava.mmarko.pia.config.PiaConfig;
 import com.endava.mmarko.pia.errors.ResourceNotFoundError;
 import com.endava.mmarko.pia.models.Departure;
+import com.endava.mmarko.pia.models.Guide;
 import com.endava.mmarko.pia.models.Tour;
-import com.endava.mmarko.pia.models.TourGuide;
 import com.endava.mmarko.pia.repositories.DepartureRepo;
 import com.endava.mmarko.pia.repositories.ReservationRepo;
 import org.junit.Before;
@@ -12,18 +12,22 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.LinkedList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = PiaConfig.class)
 public class DepartureServiceTest {
+    private static final int ID = 5;
+
     @Mock
     DepartureRepo departureRepo;
 
@@ -35,125 +39,135 @@ public class DepartureServiceTest {
 
     @Test
     public void findTest(){
-        int id = 5;
-        Departure expected = new Departure(); expected.setId(id);
+        Departure expected = new Departure();
+        expected.setId(ID);
 
-        when(departureRepo.findOne(id)).thenReturn(expected);
+        when(departureRepo.findOne(ID)).thenReturn(expected);
 
-        assertEquals(expected.getId(), departureService.find(id).getId());
+        assertEquals(expected, departureService.find(ID));
+
+        verify(departureRepo, times(1)).findOne(ID);
+        verifyNoMoreInteractions(departureRepo);
     }
 
     @Test
     public void findAllTest() {
-        List<Departure> expected = new LinkedList<>();
-        expected.add(new Departure()); expected.add(new Departure());
+        List<Departure> expected = Arrays.asList(new Departure(), new Departure());
 
         when(departureRepo.findAll()).thenReturn(expected);
 
-        assertEquals(departureService.findAll(), expected);
-}
+        assertEquals(expected, departureService.findAll());
+
+        verify(departureRepo, times(1)).findAll();
+        verifyNoMoreInteractions(departureRepo);
+    }
 
     @Test
-    public void saveImpossibleTest() {
+    public void saveNotPossibleTest() {
         Departure unsaved = new Departure();
 
-        Departure saved = new Departure();
-        saved.setId(10);
-
         when(departureRepo.findByGuideAndDate(any(), any())).thenReturn(new Departure());
-        when(departureRepo.save(unsaved)).thenReturn(saved);
 
-        assertEquals(departureService.save(unsaved), null);
+        assertEquals(null, departureService.save(unsaved));
+
+        verify(departureRepo, times(1)).findByGuideAndDate(any(), any());
+        verifyNoMoreInteractions(departureRepo);
     }
 
     @Test
     public void savePossibleTest() {
         Departure unsaved = new Departure();
-
         Departure saved = new Departure();
-        saved.setId(10);
+        saved.setId(ID);
 
         when(departureRepo.findByGuideAndDate(any(), any())).thenReturn(null);
         when(departureRepo.save(unsaved)).thenReturn(saved);
 
-        assertEquals(departureService.save(unsaved), saved);
+        assertEquals(saved, departureService.save(unsaved));
+
+        verify(departureRepo, times(1)).findByGuideAndDate(any(), any());
+        verify(departureRepo, times(1)).save(unsaved);
+        verifyNoMoreInteractions(departureRepo);
     }
 
     @Test
     public void updateTest() {
-
         Departure departure = new Departure();
 
         when(departureRepo.save(departure)).thenReturn(departure);
 
-        assertEquals(departureService.update(departure), departure);
+        assertEquals(departure, departureService.update(departure));
+
+        verify(departureRepo, times(1)).save(departure);
+        verifyNoMoreInteractions(departureRepo);
     }
 
     @Test
     public void deleteTest(){
-        departureService.delete(1);
-        verify(departureRepo, times(1)).delete(1);
+        departureService.delete(ID);
+        verify(departureRepo, times(1)).delete(ID);
         verifyNoMoreInteractions(departureRepo);
-        //v seems to the the same as the "noMoreInteractions" method, fixed in later versions ??
-        //verifyZeroInteractions(departureRepo);
     }
 
     @Test
-    public void findByClientTest(){
-        TourGuide guide = new TourGuide();
-        String guideName = "guide";
-        Departure dep1 = new Departure(); Departure dep2 = new Departure();
-        dep1.setGuide(guide); dep2.setGuide(guide);
-        List<Departure> expected = new LinkedList<>(); expected.add(dep1); expected.add(dep2);
+    public void findByGuideTest(){
+        Tour tour = new Tour();
+        Guide guide = new Guide();
+        Date date = new Date();
+        List<Departure> expected = Arrays.asList(new Departure(tour, guide, date), new Departure(tour, guide, date));
 
-        when(departureRepo.findByGuide(guideName)).thenReturn(expected);
+        when(departureRepo.findByGuide(ID)).thenReturn(expected);
 
-        assertEquals(departureService.findByGuide(guideName), expected);
+        assertEquals(expected, departureService.findByGuide(ID));
+
+        verify(departureRepo, times(1)).findByGuide(ID);
+        verifyNoMoreInteractions(departureRepo);
     }
 
     @Test(expected = ResourceNotFoundError.class)
     public void hasEnoughPeopleResourceNotFoundTest() {
-        int id = 5;
-
-        when(departureRepo.findOne(id)).thenReturn(null);
-        when(reservationRepo.countByDeparture(any())).thenReturn(1);
-
-        departureService.hasEnoughPeople(id);
+        when(departureRepo.findOne(ID)).thenReturn(null);
+        departureService.hasEnoughPeople(ID);
     }
 
     @Test
-    public void hasEnoughPeopleLessTest() {
-        int id = 5;
-        hasEnoughPeopleTest(id, -1);
-
-        assertFalse(departureService.hasEnoughPeople(id));
+    public void hasEnoughPeopleNotEnoughTest() {
+        assertFalse(hasEnoughPeopleTest(-1));
     }
 
     @Test
-    public void hasEnoughPeopleMoreTest() {
-        int id = 5;
-        hasEnoughPeopleTest(id, 1);
-
-        assertTrue(departureService.hasEnoughPeople(id));
+    public void hasEnoughPeopleMoreThenEnoughTest() {
+        assertTrue(hasEnoughPeopleTest(1));
     }
 
     @Test
-    public void hasEnoughPeopleEqualTest() {
-        int id = 5;
-        hasEnoughPeopleTest(id, 0);
-
-        assertTrue(departureService.hasEnoughPeople(id));
+    public void hasEnoughPeopleHasEnoughTest() {
+        assertTrue(hasEnoughPeopleTest(0));
     }
 
-    private void hasEnoughPeopleTest(int id, int reservationChange) {
-        int minPeople = 5; int reservations = minPeople + reservationChange;
+    private boolean hasEnoughPeopleTest(int reservationChange) {
+        int minPeople = 5;
+        int numOfReservations = minPeople + reservationChange;
 
-        Tour tour = new Tour(); tour.setMinPeople(minPeople);
-        TourGuide tourGuide = new TourGuide(); tourGuide.setTour(tour);
-        Departure dep = new Departure(); dep.setGuide(tourGuide);
+        Tour tour = new Tour();
+        tour.setMinPeople(minPeople);
+        Guide guide = new Guide();
 
-        when(departureRepo.findOne(id)).thenReturn(dep);
-        when(reservationRepo.countByDeparture(dep)).thenReturn(reservations);
+        Departure departure = new Departure();
+        departure.setTour(tour);
+        departure.setGuide(guide);
+
+        when(departureRepo.findOne(ID)).thenReturn(departure);
+        when(reservationRepo.countByDeparture(departure)).thenReturn(numOfReservations);
+
+        boolean hasEnoughPeople = departureService.hasEnoughPeople(ID);
+
+        verify(departureRepo, times(1)).findOne(ID);
+        verify(reservationRepo, times(1)).countByDeparture(departure);
+        verifyNoMoreInteractions(departureRepo);
+        verifyNoMoreInteractions(reservationRepo);
+
+        return hasEnoughPeople;
     }
 
     @Before

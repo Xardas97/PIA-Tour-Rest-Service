@@ -7,6 +7,7 @@ import com.endava.mmarko.pia.errors.WrongPasswordError;
 import com.endava.mmarko.pia.models.User;
 import com.endava.mmarko.pia.services.UserService;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +33,25 @@ import static org.hamcrest.core.Is.*;
 @ContextConfiguration(classes = {WebConfig.class, TestConfig.class})
 @WebAppConfiguration
 public class LoginControllerTest {
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "password";
+    private static final byte[] UNSAVED_JSON_BYTES;
+    
+    static {
+        Map<String, String> loginWrapper = new HashMap<>();
+        loginWrapper.put("username", USERNAME);
+        loginWrapper.put("password", PASSWORD);
+        byte[] unsavedJsonBytes;
+        try {
+            unsavedJsonBytes = new ObjectMapper().
+                    setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsBytes(loginWrapper);
+        } catch (JsonProcessingException e) {
+            unsavedJsonBytes = new byte[0];
+            e.printStackTrace();
+        }
+        UNSAVED_JSON_BYTES = unsavedJsonBytes;
+    }
+    
     private MockMvc mockMvc;
     @Autowired
     private UserService userService;
@@ -40,21 +60,11 @@ public class LoginControllerTest {
 
     @Test
     public void loginWrongPasswordTest() throws Exception {
-        String username = "username";
-        String password = "password";
-
-        Map<String, String> loginWrapper = new HashMap<>();
-        loginWrapper.put("username", username);
-        loginWrapper.put("password", password);
-
-        byte[] unsavedJsonBytes = new ObjectMapper().
-                setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsBytes(loginWrapper);
-
-        when(userService.findByUsernameAndPassword(username, password)).thenThrow(new WrongPasswordError());
+        when(userService.findByUsernameAndPassword(USERNAME, PASSWORD)).thenThrow(new WrongPasswordError());
 
         mockMvc.perform(post("/login")
                 .contentType(JSON_CONTENT_TYPE)
-                .content(unsavedJsonBytes))
+                .content(UNSAVED_JSON_BYTES))
                 .andExpect(status().isNotAcceptable())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
                 .andExpect(jsonPath("$.code", is(2)));
@@ -63,21 +73,11 @@ public class LoginControllerTest {
 
     @Test
     public void loginUserNotFoundTest() throws Exception {
-        String username = "username";
-        String password = "password";
-
-        Map<String, String> loginWrapper = new HashMap<>();
-        loginWrapper.put("username", username);
-        loginWrapper.put("password", password);
-
-        byte[] unsavedJsonBytes = new ObjectMapper().
-                setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsBytes(loginWrapper);
-
-        when(userService.findByUsernameAndPassword(username, password)).thenThrow(new UserNotFoundError());
+        when(userService.findByUsernameAndPassword(USERNAME, PASSWORD)).thenThrow(new UserNotFoundError());
 
         mockMvc.perform(post("/login")
                 .contentType(JSON_CONTENT_TYPE)
-                .content(unsavedJsonBytes))
+                .content(UNSAVED_JSON_BYTES))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
                 .andExpect(jsonPath("$.code", is(1)));
@@ -85,28 +85,17 @@ public class LoginControllerTest {
 
     @Test
     public void loginSuccessfulTest() throws Exception {
-        String username = "username";
-        String password = "password";
-
-        Map<String, String> loginWrapper = new HashMap<>();
-        loginWrapper.put("username", username);
-        loginWrapper.put("password", password);
-
-        User user = new User(username, password, (short) 10, "firstName", "lastName");
-
-        byte[] unsavedJsonBytes = new ObjectMapper().
-                setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsBytes(loginWrapper);
-
-        when(userService.findByUsernameAndPassword(username, password)).thenReturn(user);
+        User user = new User(USERNAME, PASSWORD, true, "firstName", "lastName");
+        when(userService.findByUsernameAndPassword(USERNAME, PASSWORD)).thenReturn(user);
 
         mockMvc.perform(post("/login")
                 .contentType(JSON_CONTENT_TYPE)
-                .content(unsavedJsonBytes))
+                .content(UNSAVED_JSON_BYTES))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
-                .andExpect(jsonPath("$.username", is(username)))
-                .andExpect(jsonPath("$.password", is(password)))
-                .andExpect(jsonPath("$.type", is(10)))
+                .andExpect(jsonPath("$.username", is(USERNAME)))
+                .andExpect(jsonPath("$.password", is(PASSWORD)))
+                .andExpect(jsonPath("$.guide", is(true)))
                 .andExpect(jsonPath("$.firstName", is("firstName")))
                 .andExpect(jsonPath("$.lastName", is("lastName")));
     }
@@ -114,5 +103,6 @@ public class LoginControllerTest {
     @Before
     public void init() {
         reset(userService);
-        mockMvc = MockMvcBuilders.webAppContextSetup(context).build();   }
+        mockMvc = MockMvcBuilders.webAppContextSetup(context).build();   
+    }
 }
