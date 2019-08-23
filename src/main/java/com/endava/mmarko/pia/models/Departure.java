@@ -11,7 +11,7 @@ public class Departure {
     private int id;
     @ManyToOne
     @JoinColumn(name = "tour_id")
-    Tour Tour;
+    com.endava.mmarko.pia.models.Tour Tour;
     @ManyToOne
     @JoinColumn(name = "guide_id")
     private Guide guide;
@@ -19,7 +19,7 @@ public class Departure {
 
     public Departure() {}
 
-    public Departure(Tour tour, Guide guide, Date date) {
+    public Departure(com.endava.mmarko.pia.models.Tour tour, Guide guide, Date date) {
         Tour = tour;
         this.guide = guide;
         this.date = date;

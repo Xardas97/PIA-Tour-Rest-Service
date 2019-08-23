@@ -3,24 +3,26 @@ package com.endava.mmarko.pia.services;
 import com.endava.mmarko.pia.config.PiaConfig;
 import com.endava.mmarko.pia.models.Tour;
 import com.endava.mmarko.pia.repositories.TourRepo;
+import com.endava.mmarko.pia.services.TourService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = PiaConfig.class)
+@ActiveProfiles("dev")
 public class TourServiceTest {
     private static final int ID = 5;
 

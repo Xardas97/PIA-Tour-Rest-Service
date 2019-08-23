@@ -14,6 +14,7 @@ import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import com.endava.mmarko.pia.config.DataSourceConfigParams.DataSourceType;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -24,7 +25,6 @@ import javax.sql.DataSource;
 @ComponentScan(basePackages={"com.endava.mmarko.pia"},
         excludeFilters={ @Filter(type= FilterType.ANNOTATION, value= EnableWebMvc.class) })
 public class PiaConfig {
-
     @Bean
     public Logging logging(){
         return new Logging();
@@ -35,15 +35,27 @@ public class PiaConfig {
         return new PersistenceExceptionTranslationPostProcessor();
     }
 
-   @Bean
-    public DataSource dataSource(){
-       DriverManagerDataSource dataSource =  new DriverManagerDataSource();
-       dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-       dataSource.setUrl("jdbc:mysql://localhost:3306/bgwalkingtours?zeroDateTimeBehavior=convertToNull");
-       dataSource.setUsername("root");
-       dataSource.setPassword("root");
-       return dataSource;
-   }
+    @Bean
+    public DataSource dataSource(DataSourceConfigParams configParams){
+        DriverManagerDataSource dataSource =  new DriverManagerDataSource();
+        dataSource.setDriverClassName(configParams.driver);
+        dataSource.setUrl(configParams.url);
+        dataSource.setUsername(configParams.username);
+        dataSource.setPassword(configParams.password);
+        return dataSource;
+    }
+
+    @Bean
+    @Profile("dev")
+    DataSourceConfigParams myqlDataSourceConfigParams(){
+        return new DataSourceConfigParams(DataSourceType.MySQL);
+    }
+
+    @Bean
+    @Profile("prod")
+    DataSourceConfigParams sqlServerDataSourceConfigParams(){
+        return new DataSourceConfigParams(DataSourceType.SQLServer);
+    }
 
    @Bean
     public JpaVendorAdapter jpaVendorAdapter(){

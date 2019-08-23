@@ -1,7 +1,6 @@
 package com.endava.mmarko.pia.services;
 
 import com.endava.mmarko.pia.models.Reservation;
-import com.endava.mmarko.pia.models.User;
 import com.endava.mmarko.pia.repositories.ReservationRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

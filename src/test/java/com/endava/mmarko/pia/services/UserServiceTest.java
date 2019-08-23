@@ -5,26 +5,26 @@ import com.endava.mmarko.pia.errors.UserNotFoundError;
 import com.endava.mmarko.pia.errors.WrongPasswordError;
 import com.endava.mmarko.pia.models.User;
 import com.endava.mmarko.pia.repositories.UserRepo;
+import com.endava.mmarko.pia.services.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = PiaConfig.class)
+@ActiveProfiles("dev")
 public class UserServiceTest {
 
     private static final String USERNAME = "username";

@@ -32,10 +32,6 @@ public class Guide {
         return user.toString();
     }
 
-    public List<Tour> getMyTours() {
-        return myTours;
-    }
-
     public void setMyTours(List<Tour> myTours) {
         this.myTours = myTours;
     }

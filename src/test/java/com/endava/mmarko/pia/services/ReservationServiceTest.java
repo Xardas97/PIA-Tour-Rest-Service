@@ -5,6 +5,7 @@ import com.endava.mmarko.pia.models.Departure;
 import com.endava.mmarko.pia.models.Reservation;
 import com.endava.mmarko.pia.models.User;
 import com.endava.mmarko.pia.repositories.ReservationRepo;
+import com.endava.mmarko.pia.services.ReservationService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -21,6 +23,7 @@ import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = PiaConfig.class)
+@ActiveProfiles("dev")
 public class ReservationServiceTest {
 
     private static final String USERNAME = "username";

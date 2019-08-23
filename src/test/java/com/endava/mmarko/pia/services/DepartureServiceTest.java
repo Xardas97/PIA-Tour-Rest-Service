@@ -7,15 +7,14 @@ import com.endava.mmarko.pia.models.Guide;
 import com.endava.mmarko.pia.models.Tour;
 import com.endava.mmarko.pia.repositories.DepartureRepo;
 import com.endava.mmarko.pia.repositories.ReservationRepo;
+import com.endava.mmarko.pia.services.DepartureService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -23,8 +22,12 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = PiaConfig.class)
+@ActiveProfiles("dev")
 public class DepartureServiceTest {
     private static final int ID = 5;
 

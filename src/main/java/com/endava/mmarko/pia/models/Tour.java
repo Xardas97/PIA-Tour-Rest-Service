@@ -76,10 +76,6 @@ public class Tour {
         this.minPeople = minPeople;
     }
 
-    public List<Guide> getMyGuides() {
-        return myGuides;
-    }
-
     public void setMyGuides(List<Guide> myGuides) {
         this.myGuides = myGuides;
     }
