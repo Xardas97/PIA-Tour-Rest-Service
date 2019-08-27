@@ -14,14 +14,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    @Autowired
     private UserService userService;
+
     @Autowired
-    private DepartureService departureService;
+    public UserController(UserService userService){
+        this.userService = userService;
+    }
 
     @RequestMapping(method = RequestMethod.GET)
     public List<User> users(){
-        return userService.findAll();
+        List<User> users = userService.findAll();
+        users.forEach(user -> user.setPassword(""));
+        return users;
     }
 
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
@@ -46,10 +50,5 @@ public class UserController {
             throw new CreationConflictError();
         }
         return created;
-    }
-
-    @RequestMapping(value = "/{guideId}/departures", method = RequestMethod.GET)
-    public List<Departure> departuresByGuide(@PathVariable int guideId){
-        return departureService.findByGuide(guideId);
     }
 }

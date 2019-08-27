@@ -23,19 +23,16 @@ public class Logging {
 
     @Around("service()")
     public Object logging(ProceedingJoinPoint joinPoint) throws Throwable {
-        try{
-            StringBuilder builder = new StringBuilder();
-            builder.append("\nFunction: ").append(joinPoint.getSignature().toShortString()).append("\nArguments: ");
-            for(Object arg: joinPoint.getArgs()){
-                builder.append(arg.toString()).append("\t");
-            }
-            builder.append("\n");
+        StringBuilder builder = new StringBuilder();
+        builder.append("\nFunction: ").append(joinPoint.getSignature().toShortString()).append("\nArguments: ");
+        for(Object arg: joinPoint.getArgs()){
+            builder.append(arg.toString()).append("\t");
+        }
+        builder.append("\n");
 
-            logger.log(Level.INFO, builder.toString());
+        logger.log(Level.INFO, builder.toString());
 
-            Object result = joinPoint.proceed();
-            return result;
-        } catch(Throwable t){ throw t; }
+        return joinPoint.proceed();
     }
 
     @PostConstruct

@@ -27,4 +27,8 @@ public class GuideService {
     public void delete(Integer id) {
         guideRepo.delete(id);
     }
+
+    public List<Guide> findByTour(Integer tour){
+        return guideRepo.findByMyTours_id(tour);
+    }
 }

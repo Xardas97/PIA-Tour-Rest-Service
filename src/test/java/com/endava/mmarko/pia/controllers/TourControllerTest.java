@@ -2,7 +2,10 @@ package com.endava.mmarko.pia.controllers;
 
 import com.endava.mmarko.pia.config.TestConfig;
 import com.endava.mmarko.pia.config.WebConfig;
+import com.endava.mmarko.pia.models.Guide;
 import com.endava.mmarko.pia.models.Tour;
+import com.endava.mmarko.pia.models.User;
+import com.endava.mmarko.pia.services.GuideService;
 import com.endava.mmarko.pia.services.TourService;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,10 +21,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.endava.mmarko.pia.controllers.ControllerTestUtil.*;
 import static com.endava.mmarko.pia.controllers.ControllerTestUtil.JSON_CONTENT_TYPE;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.*;
@@ -37,6 +40,8 @@ public class TourControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private TourService tourService;
+    @Autowired
+    private GuideService guideService;
     @Autowired
     private WebApplicationContext context;
 
@@ -153,6 +158,21 @@ public class TourControllerTest {
                 .andExpect(jsonPath("$[1].description", is("description2")))
                 .andExpect(jsonPath("$[1].meetingPoint", is("point2")))
                 .andExpect(jsonPath("$[1].minPeople", is(2)));
+    }
+
+    @Test
+    public void guidesByTourTest() throws Exception {
+        List<Guide> guides = Arrays.asList(
+                new Guide(new User("username1"), null),
+                new Guide(new User("username2"), null));
+
+        when(guideService.findByTour(ID)).thenReturn(guides);
+        mockMvc.perform(get("/tours/{ID}/guides", ID))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(JSON_CONTENT_TYPE))
+                .andExpect(jsonPath("$", Matchers.hasSize(2)))
+                .andExpect(jsonPath("$[0].user.username", is("username1")))
+                .andExpect(jsonPath("$[1].user.username", is("username2")));
     }
 
     @Before

@@ -13,8 +13,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/login")
 public class LoginController {
-    @Autowired
     private UserService userService;
+
+    @Autowired
+    public LoginController(UserService userService){
+        this.userService = userService;
+    }
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     public User login(@RequestBody Map<String, String> wrapper) {

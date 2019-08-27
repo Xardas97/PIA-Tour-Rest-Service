@@ -16,8 +16,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/users/{userId}/reservations")
 public class ReservationController {
-    @Autowired
     private ReservationService reservationService;
+
+    @Autowired
+    public ReservationController(ReservationService reservationService){
+        this.reservationService = reservationService;
+    }
 
     @RequestMapping(method = RequestMethod.GET)
     public List<Reservation> reservations(@PathVariable int userId){

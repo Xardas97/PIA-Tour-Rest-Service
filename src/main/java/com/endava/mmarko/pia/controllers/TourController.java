@@ -2,7 +2,9 @@ package com.endava.mmarko.pia.controllers;
 
 import com.endava.mmarko.pia.errors.CreationConflictError;
 import com.endava.mmarko.pia.errors.ResourceNotFoundError;
+import com.endava.mmarko.pia.models.Guide;
 import com.endava.mmarko.pia.models.Tour;
+import com.endava.mmarko.pia.services.GuideService;
 import com.endava.mmarko.pia.services.TourService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -16,8 +18,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/tours")
 public class TourController {
-   @Autowired
     private TourService tourService;
+    private GuideService guideService;
+
+    @Autowired
+   public TourController(TourService tourService, GuideService guideService){
+       this.tourService = tourService;
+       this.guideService = guideService;
+   }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Tour tour(@PathVariable int id){
@@ -58,4 +66,9 @@ public class TourController {
 
        return new ResponseEntity<>(created, headers, HttpStatus.CREATED);
    }
+
+    @RequestMapping(value = "/{tourId}/guides", method = RequestMethod.GET)
+    public List<Guide> guidesByTour(@PathVariable int tourId){
+        return guideService.findByTour(tourId);
+    }
 }

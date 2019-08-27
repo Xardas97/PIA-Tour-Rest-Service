@@ -6,6 +6,6 @@
   <display-name>PIA REST Service</display-name>
   <context-param>
     <param-name>spring.profiles.active</param-name>
-    <param-value>dev</param-value>
+    <param-value>prod</param-value>
   </context-param>
 </web-app>

@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.endava.mmarko.pia.services.DepartureServiceTest
 -------------------------------------------------------------------------------
-Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.337 s - in com.endava.mmarko.pia.services.DepartureServiceTest
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.341 s - in com.endava.mmarko.pia.services.DepartureServiceTest

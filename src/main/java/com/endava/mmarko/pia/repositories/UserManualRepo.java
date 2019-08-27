@@ -1,12 +1,10 @@
 package com.endava.mmarko.pia.repositories;
 
-import com.endava.mmarko.pia.models.User;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
 
 @Repository
 @Transactional
@@ -15,7 +13,7 @@ public class UserManualRepo {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public void add(User user) {
+    /*public void add(User user) {
         entityManager.persist(user);
     }
 
@@ -35,5 +33,5 @@ public class UserManualRepo {
 
     public List<User> getAll(){
         return entityManager.createQuery("SELECT u FROM User u").getResultList();
-    }
+    }*/
 }

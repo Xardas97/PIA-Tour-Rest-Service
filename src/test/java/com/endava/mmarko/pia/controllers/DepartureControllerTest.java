@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.endava.mmarko.pia.controllers.ControllerTestUtil.*;
 import static com.endava.mmarko.pia.controllers.ControllerTestUtil.JSON_CONTENT_TYPE;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.*;

@@ -81,6 +81,18 @@ public class GuideServiceTest {
         verifyNoMoreInteractions(guideRepo);
     }
 
+    @Test
+    public void findByGuideTest(){
+        List<Guide> expected = Arrays.asList(new Guide(), new Guide());
+
+        when(guideRepo.findByMyTours_id(ID)).thenReturn(expected);
+
+        assertEquals(expected, guideService.findByTour(ID));
+
+        verify(guideRepo, times(1)).findByMyTours_id(ID);
+        verifyNoMoreInteractions(guideRepo);
+    }
+
     @Before
     public void init(){
         MockitoAnnotations.initMocks(this);

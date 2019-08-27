@@ -2,10 +2,8 @@ package com.endava.mmarko.pia.controllers;
 
 import com.endava.mmarko.pia.config.TestConfig;
 import com.endava.mmarko.pia.config.WebConfig;
-import com.endava.mmarko.pia.models.Departure;
 import com.endava.mmarko.pia.models.User;
 import com.endava.mmarko.pia.services.DepartureService;
-import com.endava.mmarko.pia.services.TourService;
 import com.endava.mmarko.pia.services.UserService;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,11 +19,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.endava.mmarko.pia.controllers.ControllerTestUtil.*;
 import static com.endava.mmarko.pia.controllers.ControllerTestUtil.JSON_CONTENT_TYPE;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.*;
@@ -44,26 +40,7 @@ public class UserControllerTest {
     @Autowired
     private DepartureService departureService;
     @Autowired
-    private TourService tourService;
-    @Autowired
     private WebApplicationContext context;
-
-    @Test
-    public void departuresByGuideTest() throws Exception {
-        List<Departure> departures = new LinkedList<>();
-        Date date = new Date();
-        Departure dep1 = new Departure(); dep1.setDate(date);
-        Departure dep2 = new Departure(); dep2.setDate(date);
-        departures.add(dep1);  departures.add(dep2);
-
-        when(departureService.findByGuide(ID)).thenReturn(departures);
-        mockMvc.perform(get("/users/{ID}/departures", ID))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(JSON_CONTENT_TYPE))
-                .andExpect(jsonPath("$", Matchers.hasSize(2)))
-                .andExpect(jsonPath("$[0].date", is(date.getTime())))
-                .andExpect(jsonPath("$[1].date", is(date.getTime())));
-    }
 
     @Test
     public void saveConflictTest() throws Exception {
@@ -128,6 +105,16 @@ public class UserControllerTest {
     }
 
     @Test
+    public void userNotFoundTest() throws Exception {
+        when(userService.find(ID)).thenReturn(null);
+
+        mockMvc.perform(get("/users/{id}", ID))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(JSON_CONTENT_TYPE))
+                .andExpect(jsonPath("$.code", is(1)));
+    }
+
+    @Test
     public void usersTest() throws Exception {
         List<User> users = new LinkedList<>();
         User user1 = new User("username", "password", false, "firstName", "lastName");
@@ -142,12 +129,12 @@ public class UserControllerTest {
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
                 .andExpect(jsonPath("$", Matchers.hasSize(2)))
                 .andExpect(jsonPath("$[0].username", is("username")))
-                .andExpect(jsonPath("$[0].password", is("password")))
+                .andExpect(jsonPath("$[0].password", is("")))
                 .andExpect(jsonPath("$[0].guide", is(false)))
                 .andExpect(jsonPath("$[0].firstName", is("firstName")))
                 .andExpect(jsonPath("$[0].lastName", is("lastName")))
                 .andExpect(jsonPath("$[1].username", is("username2")))
-                .andExpect(jsonPath("$[1].password", is("password2")))
+                .andExpect(jsonPath("$[1].password", is("")))
                 .andExpect(jsonPath("$[1].guide", is(false)))
                 .andExpect(jsonPath("$[1].firstName", is("firstName2")))
                 .andExpect(jsonPath("$[1].lastName", is("lastName2")));
@@ -155,7 +142,7 @@ public class UserControllerTest {
 
     @Before
     public void init() {
-        reset(userService, departureService, tourService);
+        reset(userService, departureService);
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     }
 }

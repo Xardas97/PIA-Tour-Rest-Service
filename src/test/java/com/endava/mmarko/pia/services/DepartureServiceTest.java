@@ -71,7 +71,7 @@ public class DepartureServiceTest {
 
         when(departureRepo.findByGuideAndDate(any(), any())).thenReturn(new Departure());
 
-        assertEquals(null, departureService.save(unsaved));
+        assertNull( departureService.save(unsaved));
 
         verify(departureRepo, times(1)).findByGuideAndDate(any(), any());
         verifyNoMoreInteractions(departureRepo);

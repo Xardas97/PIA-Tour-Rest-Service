@@ -2,8 +2,12 @@ package com.endava.mmarko.pia.controllers;
 
 import com.endava.mmarko.pia.config.TestConfig;
 import com.endava.mmarko.pia.config.WebConfig;
+import com.endava.mmarko.pia.models.Departure;
 import com.endava.mmarko.pia.models.Guide;
+import com.endava.mmarko.pia.models.Tour;
+import com.endava.mmarko.pia.services.DepartureService;
 import com.endava.mmarko.pia.services.GuideService;
+import com.endava.mmarko.pia.services.TourService;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
@@ -19,9 +23,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
-import static com.endava.mmarko.pia.controllers.ControllerTestUtil.*;
 import static com.endava.mmarko.pia.controllers.ControllerTestUtil.JSON_CONTENT_TYPE;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.*;
@@ -38,7 +43,50 @@ public class GuideControllerTest {
     @Autowired
     private GuideService guideService;
     @Autowired
+    private DepartureService departureService;
+    @Autowired
+    private TourService tourService;
+    @Autowired
     private WebApplicationContext context;
+
+    @Test
+    public void departuresByGuideTest() throws Exception {
+        List<Departure> departures = new LinkedList<>();
+        Date date = new Date();
+        Departure dep1 = new Departure(); dep1.setDate(date);
+        Departure dep2 = new Departure(); dep2.setDate(date);
+        departures.add(dep1);  departures.add(dep2);
+
+        when(departureService.findByGuide(ID)).thenReturn(departures);
+        mockMvc.perform(get("/guides/{ID}/departures", ID))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(JSON_CONTENT_TYPE))
+                .andExpect(jsonPath("$", Matchers.hasSize(2)))
+                .andExpect(jsonPath("$[0].date", is(date.getTime())))
+                .andExpect(jsonPath("$[1].date", is(date.getTime())));
+    }
+
+    @Test
+    public void toursByGuideTest() throws Exception {
+
+        List<Tour> tours = Arrays.asList(
+                new Tour("name1", "description1", "meeting point1", 1),
+                new Tour("name2", "description2", "meeting point2", 2));
+
+        when(tourService.findByGuide(ID)).thenReturn(tours);
+        mockMvc.perform(get("/guides/{ID}/tours", ID))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(JSON_CONTENT_TYPE))
+                .andExpect(jsonPath("$", Matchers.hasSize(2)))
+                .andExpect(jsonPath("$[0].name", is("name1")))
+                .andExpect(jsonPath("$[1].name", is("name2")))
+                .andExpect(jsonPath("$[0].description", is("description1")))
+                .andExpect(jsonPath("$[1].description", is("description2")))
+                .andExpect(jsonPath("$[0].meetingPoint", is("meeting point1")))
+                .andExpect(jsonPath("$[1].meetingPoint", is("meeting point2")))
+                .andExpect(jsonPath("$[0].minPeople", is(1)))
+                .andExpect(jsonPath("$[1].minPeople", is(2)));
+    }
 
     @Test
     public void deleteTest() throws Exception {

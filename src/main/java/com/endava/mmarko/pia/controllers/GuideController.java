@@ -2,8 +2,12 @@ package com.endava.mmarko.pia.controllers;
 
 import com.endava.mmarko.pia.errors.CreationConflictError;
 import com.endava.mmarko.pia.errors.ResourceNotFoundError;
+import com.endava.mmarko.pia.models.Departure;
 import com.endava.mmarko.pia.models.Guide;
+import com.endava.mmarko.pia.models.Tour;
+import com.endava.mmarko.pia.services.DepartureService;
 import com.endava.mmarko.pia.services.GuideService;
+import com.endava.mmarko.pia.services.TourService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,8 +20,17 @@ import java.util.List;
 @RestController
 @RequestMapping("/guides")
 public class GuideController {
-    @Autowired
     private GuideService guideService;
+    private DepartureService departureService;
+    private TourService tourService;
+
+    @Autowired
+    public GuideController(GuideService guideService, DepartureService departureService,
+                           TourService tourService){
+        this.guideService = guideService;
+        this.departureService = departureService;
+        this.tourService = tourService;
+    }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Guide guide(@PathVariable int id){
@@ -57,5 +70,15 @@ public class GuideController {
                 build().toUri());
 
         return new ResponseEntity<>(created, headers, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "/{guideId}/departures", method = RequestMethod.GET)
+    public List<Departure> departuresByGuide(@PathVariable int guideId){
+        return departureService.findByGuide(guideId);
+    }
+
+    @RequestMapping(value = "/{guideId}/tours", method = RequestMethod.GET)
+    public List<Tour> toursByGuide(@PathVariable int guideId){
+        return tourService.findByGuide(guideId);
     }
 }

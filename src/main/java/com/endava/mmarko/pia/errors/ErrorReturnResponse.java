@@ -1,8 +1,8 @@
 package com.endava.mmarko.pia.errors;
 
 public class ErrorReturnResponse {
-    private int code;
-    private String message;
+    private final int code;
+    private final String message;
 
     public ErrorReturnResponse(int code, String message) {
         this.code = code;
