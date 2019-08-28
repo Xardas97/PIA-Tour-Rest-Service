@@ -13,7 +13,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/login")
 public class LoginController {
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public LoginController(UserService userService){

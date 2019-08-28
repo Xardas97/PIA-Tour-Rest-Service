@@ -20,9 +20,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/guides")
 public class GuideController {
-    private GuideService guideService;
-    private DepartureService departureService;
-    private TourService tourService;
+    private final GuideService guideService;
+    private final DepartureService departureService;
+    private final TourService tourService;
 
     @Autowired
     public GuideController(GuideService guideService, DepartureService departureService,

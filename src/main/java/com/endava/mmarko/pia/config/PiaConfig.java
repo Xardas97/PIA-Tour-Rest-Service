@@ -47,7 +47,7 @@ public class PiaConfig {
 
     @Bean
     @Profile("dev")
-    DataSourceConfigParams myqlDataSourceConfigParams(){
+    DataSourceConfigParams mysqlDataSourceConfigParams(){
         return new DataSourceConfigParams(DataSourceType.MySQL);
     }
 
@@ -71,11 +71,11 @@ public class PiaConfig {
    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
                                                                        JpaVendorAdapter jpaVendorAdapter){
 
-        LocalContainerEntityManagerFactoryBean emfb = new LocalContainerEntityManagerFactoryBean();
-        emfb.setDataSource(dataSource);
-        emfb.setJpaVendorAdapter(jpaVendorAdapter);
-        emfb.setPackagesToScan("com.endava.mmarko.pia.models");
-        return emfb;
+        LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
+        emf.setDataSource(dataSource);
+        emf.setJpaVendorAdapter(jpaVendorAdapter);
+        emf.setPackagesToScan("com.endava.mmarko.pia.models");
+        return emf;
    }
 
     @Bean

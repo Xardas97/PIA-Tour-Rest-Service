@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/departures")
 public class DepartureController {
-    private DepartureService departureService;
+    private final DepartureService departureService;
 
     @Autowired
     public DepartureController(DepartureService departureService){

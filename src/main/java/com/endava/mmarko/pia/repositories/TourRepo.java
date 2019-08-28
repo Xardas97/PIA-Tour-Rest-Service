@@ -2,7 +2,6 @@ package com.endava.mmarko.pia.repositories;
 
 import com.endava.mmarko.pia.models.Tour;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 

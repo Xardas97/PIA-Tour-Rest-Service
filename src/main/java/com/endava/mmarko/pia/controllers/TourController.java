@@ -18,8 +18,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/tours")
 public class TourController {
-    private TourService tourService;
-    private GuideService guideService;
+    private final TourService tourService;
+    private final GuideService guideService;
 
     @Autowired
    public TourController(TourService tourService, GuideService guideService){

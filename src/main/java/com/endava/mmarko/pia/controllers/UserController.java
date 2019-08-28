@@ -2,9 +2,7 @@ package com.endava.mmarko.pia.controllers;
 
 import com.endava.mmarko.pia.errors.CreationConflictError;
 import com.endava.mmarko.pia.errors.UserNotFoundError;
-import com.endava.mmarko.pia.models.Departure;
 import com.endava.mmarko.pia.models.User;
-import com.endava.mmarko.pia.services.DepartureService;
 import com.endava.mmarko.pia.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public UserController(UserService userService){
