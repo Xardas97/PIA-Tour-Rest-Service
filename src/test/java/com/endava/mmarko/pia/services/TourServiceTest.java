@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -35,7 +36,7 @@ public class TourServiceTest {
     @Test
     public void deleteTest(){
         tourService.delete(ID);
-        verify(tourRepo, times(1)).delete(ID);
+        verify(tourRepo, times(1)).deleteById(ID);
         verifyNoMoreInteractions(tourRepo);
     }
 
@@ -56,11 +57,11 @@ public class TourServiceTest {
         Tour expected = new Tour();
         expected.setId(ID);
 
-        when(tourRepo.findOne(ID)).thenReturn(expected);
+        when(tourRepo.findById(ID)).thenReturn(Optional.of(expected));
 
         assertEquals(expected, tourService.find(ID));
 
-        verify(tourRepo, times(1)).findOne(ID);
+        verify(tourRepo, times(1)).findById(ID);
         verifyNoMoreInteractions(tourRepo);
     }
 

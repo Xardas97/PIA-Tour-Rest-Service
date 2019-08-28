@@ -17,7 +17,7 @@ public class DepartureService {
     private ReservationRepo reservationRepo;
 
     public Departure find(Integer id){
-        return departureRepo.findOne(id);
+        return departureRepo.findById(id).orElse(null);
     }
 
     public List<Departure> findAll(){
@@ -36,11 +36,11 @@ public class DepartureService {
     }
 
     public void delete(Integer id){
-        departureRepo.delete(id);
+        departureRepo.deleteById(id);
     }
 
     public Boolean hasEnoughPeople(Integer id) throws ResourceNotFoundError {
-        Departure departure = departureRepo.findOne(id);
+        Departure departure = departureRepo.findById(id).orElse(null);
         if (departure == null) {
             throw new ResourceNotFoundError();
         }

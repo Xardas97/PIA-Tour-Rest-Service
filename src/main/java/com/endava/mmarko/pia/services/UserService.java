@@ -19,7 +19,7 @@ public class UserService {
     }
 
     public User find(Integer id){
-        return userRepo.findOne(id);
+        return userRepo.findById(id).orElse(null);
     }
 
     public User findByUsernameAndPassword(String username, String password) throws UserNotFoundError, WrongPasswordError {
@@ -38,6 +38,6 @@ public class UserService {
     }
 
     public void delete(Integer id){
-        userRepo.delete(id);
+        userRepo.deleteById(id);
     }
 }

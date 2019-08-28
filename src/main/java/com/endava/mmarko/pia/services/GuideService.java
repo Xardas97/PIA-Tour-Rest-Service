@@ -17,7 +17,7 @@ public class GuideService {
     }
 
     public Guide find(Integer id){
-        return guideRepo.findOne(id);
+        return guideRepo.findById(id).orElse(null);
     }
 
     public List<Guide> findAll() {
@@ -25,7 +25,7 @@ public class GuideService {
     }
 
     public void delete(Integer id) {
-        guideRepo.delete(id);
+        guideRepo.deleteById(id);
     }
 
     public List<Guide> findByTour(Integer tour){

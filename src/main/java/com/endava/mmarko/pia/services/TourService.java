@@ -17,13 +17,13 @@ public class TourService {
     }
 
     public Tour find(Integer id){
-        return tourRepo.findOne(id);
+        return tourRepo.findById(id).orElse(null);
     }
 
     public List<Tour> findAll() { return tourRepo.findAll(); }
 
     public void delete(Integer id) {
-        tourRepo.delete(id);
+        tourRepo.deleteById(id);
     }
 
     public List<Tour> findByGuide(int guideId){

@@ -7,7 +7,6 @@ import com.endava.mmarko.pia.models.Guide;
 import com.endava.mmarko.pia.models.Tour;
 import com.endava.mmarko.pia.repositories.DepartureRepo;
 import com.endava.mmarko.pia.repositories.ReservationRepo;
-import com.endava.mmarko.pia.services.DepartureService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -45,11 +45,11 @@ public class DepartureServiceTest {
         Departure expected = new Departure();
         expected.setId(ID);
 
-        when(departureRepo.findOne(ID)).thenReturn(expected);
+        when(departureRepo.findById(ID)).thenReturn(Optional.of(expected));
 
         assertEquals(expected, departureService.find(ID));
 
-        verify(departureRepo, times(1)).findOne(ID);
+        verify(departureRepo, times(1)).findById(ID);
         verifyNoMoreInteractions(departureRepo);
     }
 
@@ -108,7 +108,7 @@ public class DepartureServiceTest {
     @Test
     public void deleteTest(){
         departureService.delete(ID);
-        verify(departureRepo, times(1)).delete(ID);
+        verify(departureRepo, times(1)).deleteById(ID);
         verifyNoMoreInteractions(departureRepo);
     }
 
@@ -129,7 +129,7 @@ public class DepartureServiceTest {
 
     @Test(expected = ResourceNotFoundError.class)
     public void hasEnoughPeopleResourceNotFoundTest() {
-        when(departureRepo.findOne(ID)).thenReturn(null);
+        when(departureRepo.findById(ID)).thenReturn(Optional.empty());
         departureService.hasEnoughPeople(ID);
     }
 
@@ -160,12 +160,12 @@ public class DepartureServiceTest {
         departure.setTour(tour);
         departure.setGuide(guide);
 
-        when(departureRepo.findOne(ID)).thenReturn(departure);
+        when(departureRepo.findById(ID)).thenReturn(Optional.of(departure));
         when(reservationRepo.countByDeparture(departure)).thenReturn(numOfReservations);
 
         boolean hasEnoughPeople = departureService.hasEnoughPeople(ID);
 
-        verify(departureRepo, times(1)).findOne(ID);
+        verify(departureRepo, times(1)).findById(ID);
         verify(reservationRepo, times(1)).countByDeparture(departure);
         verifyNoMoreInteractions(departureRepo);
         verifyNoMoreInteractions(reservationRepo);

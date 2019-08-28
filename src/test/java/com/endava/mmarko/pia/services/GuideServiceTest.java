@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -36,7 +37,7 @@ public class GuideServiceTest {
     @Test
     public void deleteTest(){
         guideService.delete(ID);
-        verify(guideRepo, times(1)).delete(ID);
+        verify(guideRepo, times(1)).deleteById(ID);
         verifyNoMoreInteractions(guideRepo);
     }
 
@@ -57,11 +58,11 @@ public class GuideServiceTest {
         Guide expected = new Guide();
         expected.setId(ID);
 
-        when(guideRepo.findOne(ID)).thenReturn(expected);
+        when(guideRepo.findById(ID)).thenReturn(Optional.of(expected));
 
         assertEquals(expected, guideService.find(ID));
 
-        verify(guideRepo, times(1)).findOne(ID);
+        verify(guideRepo, times(1)).findById(ID);
         verifyNoMoreInteractions(guideRepo);
     }
 

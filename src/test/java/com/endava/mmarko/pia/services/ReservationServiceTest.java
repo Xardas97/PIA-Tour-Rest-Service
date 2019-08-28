@@ -20,6 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = PiaConfig.class)
@@ -48,11 +49,11 @@ public class ReservationServiceTest {
         reservation.setId(RES_ID);
         reservation.setClient(user);
 
-        Mockito.when(reservationRepo.findOne(RES_ID)).thenReturn(reservation);
+        Mockito.when(reservationRepo.findById(RES_ID)).thenReturn(Optional.of(reservation));
 
         Assert.assertNull(reservationService.find(USER_ID+1, RES_ID));
 
-        Mockito.verify(reservationRepo, Mockito.times(1)).findOne(RES_ID);
+        Mockito.verify(reservationRepo, Mockito.times(1)).findById(RES_ID);
         Mockito.verifyNoMoreInteractions(reservationRepo);
     }
 
@@ -65,10 +66,10 @@ public class ReservationServiceTest {
         reservation.setId(RES_ID);
         reservation.setClient(user);
 
-        Mockito.when(reservationRepo.findOne(RES_ID)).thenReturn(reservation);
+        Mockito.when(reservationRepo.findById(RES_ID)).thenReturn(Optional.of(reservation));
         Assert.assertEquals(reservation, reservationService.find(USER_ID, RES_ID));
 
-        Mockito.verify(reservationRepo, Mockito.times(1)).findOne(RES_ID);
+        Mockito.verify(reservationRepo, Mockito.times(1)).findById(RES_ID);
         Mockito.verifyNoMoreInteractions(reservationRepo);
     }
 

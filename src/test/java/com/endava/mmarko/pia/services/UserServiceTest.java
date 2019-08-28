@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -54,11 +55,11 @@ public class UserServiceTest {
         User expected = new User();
         expected.setUsername(USERNAME);
 
-        when(userRepo.findOne(ID)).thenReturn(expected);
+        when(userRepo.findById(ID)).thenReturn(Optional.of(expected));
 
         assertEquals(expected.getUsername(), userService.find(ID).getUsername());
 
-        verify(userRepo, times(1)).findOne(ID);
+        verify(userRepo, times(1)).findById(ID);
         verifyNoMoreInteractions(userRepo);
     }
 
@@ -107,7 +108,7 @@ public class UserServiceTest {
     @Test
     public void deleteTest(){
         userService.delete(ID);
-        verify(userRepo, times(1)).delete(ID);
+        verify(userRepo, times(1)).deleteById(ID);
         verifyNoMoreInteractions(userRepo);
     }
 

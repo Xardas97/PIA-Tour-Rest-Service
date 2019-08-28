@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class ReservationService {
@@ -13,9 +14,9 @@ public class ReservationService {
     private ReservationRepo reservationRepo;
 
     public Reservation find(Integer userId, Integer reservationId){
-        Reservation r = reservationRepo.findOne(reservationId);
-        if(r.getClient().getId() == userId) {
-            return r;
+        Optional<Reservation> r = reservationRepo.findById(reservationId);
+        if(r.isPresent() && r.get().getClient().getId() == userId){
+            return r.get();
         }
         return null;
     }
