@@ -3,30 +3,25 @@ package com.endava.mmarko.pia.services;
 import com.endava.mmarko.pia.models.Tour;
 import com.endava.mmarko.pia.repositories.TourRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-public class TourService {
+public class TourService extends AbstractService<Tour, Integer> {
+
     @Autowired
-    private TourRepo tourRepo;
-
-    public Tour save(Tour tour){
-        return tourRepo.save(tour);
-    }
-
-    public Tour find(Integer id){
-        return tourRepo.findById(id).orElse(null);
-    }
-
-    public List<Tour> findAll() { return tourRepo.findAll(); }
-
-    public void delete(Integer id) {
-        tourRepo.deleteById(id);
+    public TourService(TourRepo tourRepo) {
+        setRepo(tourRepo);
     }
 
     public List<Tour> findByGuide(int guideId){
-        return tourRepo.findByMyGuides_id(guideId);
+        return getRepo().findByMyGuides_id(guideId);
+    }
+
+    @Override
+    public TourRepo getRepo() {
+        return (TourRepo) super.getRepo();
     }
 }

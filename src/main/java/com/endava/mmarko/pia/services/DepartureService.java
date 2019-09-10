@@ -2,45 +2,36 @@ package com.endava.mmarko.pia.services;
 
 import com.endava.mmarko.pia.errors.ResourceNotFoundError;
 import com.endava.mmarko.pia.models.Departure;
+import com.endava.mmarko.pia.models.Reservation;
 import com.endava.mmarko.pia.repositories.DepartureRepo;
 import com.endava.mmarko.pia.repositories.ReservationRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-public class DepartureService {
-    @Autowired
-    private DepartureRepo departureRepo;
-    @Autowired
+public class DepartureService extends AbstractService<Departure, Integer> {
+
     private ReservationRepo reservationRepo;
 
-    public Departure find(Integer id){
-        return departureRepo.findById(id).orElse(null);
+    @Autowired
+    public DepartureService(ReservationRepo reservationRepo, DepartureRepo departureRepo) {
+        this.reservationRepo = reservationRepo;
+        setRepo(departureRepo);
     }
 
-    public List<Departure> findAll(){
-        return departureRepo.findAll();
-    }
-
+    @Override
     public Departure save(Departure d){
-        if (departureRepo.findByGuideAndDate(d.getGuide(), d.getDate()) != null) {
+        if (getRepo().findByGuideAndDate(d.getGuide(), d.getDate()) != null) {
             return null;
         }
-        return departureRepo.save(d);
-    }
-
-    public Departure update(Departure d){
-        return departureRepo.save(d);
-    }
-
-    public void delete(Integer id){
-        departureRepo.deleteById(id);
+        return super.save(d);
     }
 
     public Boolean hasEnoughPeople(Integer id) throws ResourceNotFoundError {
-        Departure departure = departureRepo.findById(id).orElse(null);
+        Departure departure = find(id);
         if (departure == null) {
             throw new ResourceNotFoundError();
         }
@@ -50,6 +41,11 @@ public class DepartureService {
     }
 
     public List<Departure> findByGuide(Integer guideId){
-        return departureRepo.findByGuide(guideId);
+        return getRepo().findByGuide(guideId);
+    }
+
+    @Override
+    protected DepartureRepo getRepo() {
+        return (DepartureRepo) super.getRepo();
     }
 }

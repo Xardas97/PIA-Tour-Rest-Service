@@ -1,13 +1,17 @@
 package com.endava.mmarko.pia.models;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "reservations")
-public class Reservation {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+@Getter
+@Setter
+@ToString
+public class Reservation extends AbstractModel<Integer> {
     @ManyToOne
     @JoinColumn(name = "departure_id")
     private Departure departure;
@@ -19,38 +23,6 @@ public class Reservation {
 
     public Reservation(Departure departure, User client) {
         this.departure = departure;
-        this.client = client;
-    }
-
-    @Override
-    public String toString() {
-        return "Reservation{" +
-                "departure=" + departure +
-                ", client=" + client +
-                '}';
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Departure getDeparture() {
-        return departure;
-    }
-
-    public void setDeparture(Departure departure) {
-        this.departure = departure;
-    }
-
-    public User getClient() {
-        return client;
-    }
-
-    public void setClient(User client) {
         this.client = client;
     }
 }

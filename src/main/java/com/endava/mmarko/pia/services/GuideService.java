@@ -8,27 +8,19 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class GuideService {
+public class GuideService extends AbstractService<Guide, Integer> {
+
     @Autowired
-    private GuideRepo guideRepo;
-
-    public Guide save(Guide guide){
-        return guideRepo.save(guide);
-    }
-
-    public Guide find(Integer id){
-        return guideRepo.findById(id).orElse(null);
-    }
-
-    public List<Guide> findAll() {
-        return guideRepo.findAll();
-    }
-
-    public void delete(Integer id) {
-        guideRepo.deleteById(id);
+    public GuideService(GuideRepo guideRepo) {
+        setRepo(guideRepo);
     }
 
     public List<Guide> findByTour(Integer tour){
-        return guideRepo.findByMyTours_id(tour);
+        return getRepo().findByMyTours_id(tour);
+    }
+
+    @Override
+    protected GuideRepo getRepo() {
+        return (GuideRepo) super.getRepo();
     }
 }

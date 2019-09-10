@@ -5,25 +5,22 @@ import com.endava.mmarko.pia.errors.WrongPasswordError;
 import com.endava.mmarko.pia.models.User;
 import com.endava.mmarko.pia.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-public class UserService {
+public class UserService extends AbstractService<User, Integer> {
+
     @Autowired
-    private UserRepo userRepo;
-
-    public List<User> findAll(){
-        return userRepo.findAll();
+    public UserService(UserRepo userRepo) {
+        setRepo(userRepo);
     }
 
-    public User find(Integer id){
-        return userRepo.findById(id).orElse(null);
-    }
-
-    public User findByUsernameAndPassword(String username, String password) throws UserNotFoundError, WrongPasswordError {
-        User user = userRepo.findByUsername(username);
+    public User findByUsernameAndPassword(String username, String password)
+            throws UserNotFoundError, WrongPasswordError {
+        User user = getRepo().findByUsername(username);
         if(user == null) {
             throw new UserNotFoundError();
         }
@@ -33,11 +30,8 @@ public class UserService {
         return user;
     }
 
-    public User save(User user){
-        return userRepo.save(user);
-    }
-
-    public void delete(Integer id){
-        userRepo.deleteById(id);
+    @Override
+    protected UserRepo getRepo() {
+        return (UserRepo) super.getRepo();
     }
 }

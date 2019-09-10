@@ -71,7 +71,9 @@ public class ReservationControllerTest {
     @Test
     public void saveTest() throws Exception {
         Reservation res = new Reservation();
-        res.setClient(new User());
+        User user = new User();
+        user.setId(USER_ID);
+        res.setClient(user);
 
         byte[] unsavedJsonBytes = new ObjectMapper().
                 setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsBytes(res);
@@ -84,8 +86,8 @@ public class ReservationControllerTest {
                 .content(unsavedJsonBytes))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
-                .andExpect(jsonPath("$.id", Is.is(RES_ID)));
-                //.andExpect(jsonPath("$.client.id", Is.is("client")));
+                .andExpect(jsonPath("$.id", Is.is(RES_ID)))
+                .andExpect(jsonPath("$.client.id", Is.is(USER_ID)));
     }
 
     @Test

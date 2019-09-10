@@ -71,7 +71,7 @@ public class UserControllerTest {
         mockMvc.perform(post("/users" )
                 .contentType(JSON_CONTENT_TYPE)
                 .content(unsavedJsonBytes))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
                 .andExpect(jsonPath("$.username", is("username")))
                 .andExpect(jsonPath("$.password", is("password")))

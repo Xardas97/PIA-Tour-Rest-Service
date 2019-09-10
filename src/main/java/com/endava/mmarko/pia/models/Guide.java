@@ -1,13 +1,18 @@
 package com.endava.mmarko.pia.models;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Table(name="guides")
 @Entity
-public class Guide {
-    @Id
-    private int id;
+@Getter
+@Setter
+@ToString(exclude = {"myTours"})
+public class Guide extends AbstractModel<Integer> {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -25,30 +30,5 @@ public class Guide {
     public Guide(User user, List<Tour> myTours) {
         this.user = user;
         this.myTours = myTours;
-    }
-
-    @Override
-    public String toString() {
-        return user.toString();
-    }
-
-    public void setMyTours(List<Tour> myTours) {
-        this.myTours = myTours;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 }
