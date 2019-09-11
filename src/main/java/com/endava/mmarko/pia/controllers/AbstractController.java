@@ -31,7 +31,7 @@ public abstract class AbstractController<T extends AbstractModel<ID>, ID> {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public T update(@RequestBody T obj, @PathVariable ID id){
+    public T update(@RequestBody T obj, @PathVariable ID id) {
         obj.setId(id);
         return service.update(obj);
     }

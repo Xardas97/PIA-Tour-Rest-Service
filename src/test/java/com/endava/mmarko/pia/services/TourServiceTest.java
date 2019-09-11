@@ -3,7 +3,6 @@ package com.endava.mmarko.pia.services;
 import com.endava.mmarko.pia.config.PiaConfig;
 import com.endava.mmarko.pia.models.Tour;
 import com.endava.mmarko.pia.repositories.TourRepo;
-import com.endava.mmarko.pia.services.TourService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -74,7 +74,6 @@ public class UserControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
                 .andExpect(jsonPath("$.username", is("username")))
-                .andExpect(jsonPath("$.password", is("password")))
                 .andExpect(jsonPath("$.guide", is(true)))
                 .andExpect(jsonPath("$.firstName", is("firstName")))
                 .andExpect(jsonPath("$.lastName", is("lastName")));
@@ -89,23 +88,22 @@ public class UserControllerTest {
     }
 
     @Test
-    public void userTest() throws Exception {
+    public void findTest() throws Exception {
         User user = new User("username", "password", true, "firstName", "lastName");
 
         when(userService.find(ID)).thenReturn(user);
 
-        mockMvc.perform(get("/users/{ID}", ID))
+        mockMvc.perform(get("/users/{id}", ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
                 .andExpect(jsonPath("$.username", is("username")))
-                .andExpect(jsonPath("$.password", is("")))
                 .andExpect(jsonPath("$.guide", is(true)))
                 .andExpect(jsonPath("$.firstName", is("firstName")))
                 .andExpect(jsonPath("$.lastName", is("lastName")));
     }
 
     @Test
-    public void userNotFoundTest() throws Exception {
+    public void findNotFoundTest() throws Exception {
         when(userService.find(ID)).thenReturn(null);
 
         mockMvc.perform(get("/users/{id}", ID))
@@ -115,7 +113,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void usersTest() throws Exception {
+    public void findAllTest() throws Exception {
         List<User> users = new LinkedList<>();
         User user1 = new User("username", "password", false, "firstName", "lastName");
         User user2 = new User("username2", "password2", false, "firstName2", "lastName2");
@@ -129,12 +127,10 @@ public class UserControllerTest {
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
                 .andExpect(jsonPath("$", Matchers.hasSize(2)))
                 .andExpect(jsonPath("$[0].username", is("username")))
-                .andExpect(jsonPath("$[0].password", is("")))
                 .andExpect(jsonPath("$[0].guide", is(false)))
                 .andExpect(jsonPath("$[0].firstName", is("firstName")))
                 .andExpect(jsonPath("$[0].lastName", is("lastName")))
                 .andExpect(jsonPath("$[1].username", is("username2")))
-                .andExpect(jsonPath("$[1].password", is("")))
                 .andExpect(jsonPath("$[1].guide", is(false)))
                 .andExpect(jsonPath("$[1].firstName", is("firstName2")))
                 .andExpect(jsonPath("$[1].lastName", is("lastName2")));

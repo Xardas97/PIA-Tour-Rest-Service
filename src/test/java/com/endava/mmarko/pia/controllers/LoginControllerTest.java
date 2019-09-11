@@ -95,7 +95,6 @@ public class LoginControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
                 .andExpect(jsonPath("$.username", is(USERNAME)))
-                .andExpect(jsonPath("$.password", is(PASSWORD)))
                 .andExpect(jsonPath("$.guide", is(true)))
                 .andExpect(jsonPath("$.firstName", is("firstName")))
                 .andExpect(jsonPath("$.lastName", is("lastName")));

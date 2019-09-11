@@ -14,8 +14,6 @@ import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import com.endava.mmarko.pia.config.DataSourceConfigParams.DataSourceType;
-
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
@@ -48,13 +46,13 @@ public class PiaConfig {
     @Bean
     @Profile("dev")
     DataSourceConfigParams mysqlDataSourceConfigParams(){
-        return new DataSourceConfigParams(DataSourceType.MySQL);
+        return new MySQLDataSourceConfigParams();
     }
 
     @Bean
     @Profile("prod")
     DataSourceConfigParams sqlServerDataSourceConfigParams(){
-        return new DataSourceConfigParams(DataSourceType.SQLServer);
+        return new SQLServerDataSourceConfigParams();
     }
 
    @Bean

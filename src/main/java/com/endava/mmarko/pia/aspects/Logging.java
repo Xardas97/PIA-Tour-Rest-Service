@@ -24,9 +24,15 @@ public class Logging {
     @Around("service()")
     public Object logging(ProceedingJoinPoint joinPoint) throws Throwable {
         StringBuilder builder = new StringBuilder();
-        builder.append("\nFunction: ").append(joinPoint.getSignature().toShortString()).append("\nArguments: ");
-        for(Object arg: joinPoint.getArgs()){
-            builder.append(arg.toString()).append("\t");
+
+        builder.append("\nFunction: ").append(joinPoint.getSignature().toShortString());
+
+        Object[] arguments = joinPoint.getArgs();
+        if(arguments.length > 0){
+            builder.append("\nArguments: ");
+            for(Object arg: arguments){
+                builder.append(arg.toString()).append("\t");
+            }
         }
         builder.append("\n");
 

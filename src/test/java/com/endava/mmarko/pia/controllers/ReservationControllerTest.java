@@ -52,7 +52,9 @@ public class ReservationControllerTest {
     @Test
     public void updateTest() throws Exception {
         Reservation res = new Reservation();
-        res.setClient(new User());
+        User user = new User();
+        user.setId(USER_ID);
+        res.setClient(user);
 
         byte[] unsavedJsonBytes = new ObjectMapper().
                 setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsBytes(res);
@@ -64,8 +66,8 @@ public class ReservationControllerTest {
                 .content(unsavedJsonBytes))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
-                .andExpect(jsonPath("$.id", Is.is(RES_ID)));
-                //.andExpect(jsonPath("$.client.id", Is.is(USER_ID)));
+                .andExpect(jsonPath("$.id", Is.is(RES_ID)))
+                .andExpect(jsonPath("$.client.id", Is.is(USER_ID)));
     }
 
     @Test
@@ -109,7 +111,7 @@ public class ReservationControllerTest {
     }
 
     @Test
-    public void reservationTest() throws Exception {
+    public void findTest() throws Exception {
         Reservation res = new Reservation();
         res.setClient(new User());
 
@@ -122,17 +124,17 @@ public class ReservationControllerTest {
     }
 
     @Test
-    public void reservationNotFoundTest() throws Exception {
+    public void findNotFoundTest() throws Exception {
         when(reservationService.find(USER_ID, RES_ID)).thenReturn(null);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users/{userId}/reservations/{resId}", USER_ID, RES_ID))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(JSON_CONTENT_TYPE));
-                //.andExpect(jsonPath("$.code", Is.is(3)));
+                .andExpect(content().contentType(JSON_CONTENT_TYPE))
+                .andExpect(jsonPath("$.code", Is.is(3)));
     }
 
     @Test
-    public void reservationsTest() throws Exception {
+    public void findAllTest() throws Exception {
         List<Reservation> reservations = new LinkedList<>();
         Reservation res1 = new Reservation(); res1.setClient(new User());
         Reservation res2 = new Reservation(); res2.setClient(new User());
@@ -144,8 +146,6 @@ public class ReservationControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
                 .andExpect(jsonPath("$", Matchers.hasSize(2)));
-                //.andExpect(jsonPath("$[0].client", Is.is(USER_ID)))
-                //.andExpect(jsonPath("$[1].client", Is.is(USER_ID + 1)));
     }
 
     @Before

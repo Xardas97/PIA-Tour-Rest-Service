@@ -60,7 +60,7 @@ public class TourControllerTest {
         byte[] unsavedJsonBytes = new ObjectMapper().
                 setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsBytes(tour);
 
-        when(tourService.save(any())).thenAnswer(i -> i.getArguments()[0]);
+        when(tourService.update(any())).thenAnswer(i -> i.getArguments()[0]);
 
         mockMvc.perform(put("/tours/{id}", ID )
                 .contentType(JSON_CONTENT_TYPE)
@@ -114,7 +114,7 @@ public class TourControllerTest {
     }
 
     @Test
-    public void tourTest() throws Exception {
+    public void findTest() throws Exception {
         Tour tour = new Tour("name", "description", "point", 1);
         when(tourService.find(1)).thenReturn(tour);
 
@@ -128,7 +128,7 @@ public class TourControllerTest {
     }
 
     @Test
-    public void tourNotFoundTest() throws Exception {
+    public void findNotFoundTest() throws Exception {
         when(tourService.find(1)).thenReturn(null);
 
         mockMvc.perform(get("/tours/{id}", 1))
@@ -138,7 +138,7 @@ public class TourControllerTest {
     }
 
     @Test
-    public void toursTest() throws Exception {
+    public void findAlTest() throws Exception {
         List<Tour> tours = new LinkedList<>();
         Tour tour1 = new Tour("name1", "description1", "point1", 1);
         Tour tour2 = new Tour("name2", "description2", "point2", 2);
@@ -163,8 +163,8 @@ public class TourControllerTest {
     @Test
     public void guidesByTourTest() throws Exception {
         List<Guide> guides = Arrays.asList(
-                new Guide(new User("username1"), null),
-                new Guide(new User("username2"), null));
+                new Guide(new User("username1")),
+                new Guide(new User("username2")));
 
         when(guideService.findByTour(ID)).thenReturn(guides);
         mockMvc.perform(get("/tours/{ID}/guides", ID))

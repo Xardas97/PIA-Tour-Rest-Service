@@ -24,12 +24,12 @@ public class ReservationController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<Reservation> reservations(@PathVariable int userId){
+    public List<Reservation> findAll(@PathVariable int userId){
         return reservationService.findByClient(userId);
     }
 
     @RequestMapping(value = "/{resId}",method = RequestMethod.GET)
-    public Reservation reservation(@PathVariable int userId, @PathVariable int resId){
+    public Reservation find(@PathVariable int userId, @PathVariable int resId){
         Reservation r = reservationService.find(userId, resId);
         if(r==null) {
             throw new ResourceNotFoundError("Reservation with that ID doesn't exist or doesn't belong to that user");

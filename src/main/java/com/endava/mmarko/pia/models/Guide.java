@@ -1,9 +1,9 @@
 package com.endava.mmarko.pia.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
 import javax.persistence.*;
 import java.util.List;
 
@@ -22,13 +22,13 @@ public class Guide extends AbstractModel<Integer> {
             joinColumns = { @JoinColumn(name = "guide_id") },
             inverseJoinColumns = { @JoinColumn(name = "tour_id") }
     )
+    @JsonIgnore
     private List<Tour> myTours;
 
     public Guide() {
     }
 
-    public Guide(User user, List<Tour> myTours) {
+    public Guide(User user) {
         this.user = user;
-        this.myTours = myTours;
     }
 }

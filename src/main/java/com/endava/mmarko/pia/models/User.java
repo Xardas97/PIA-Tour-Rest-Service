@@ -1,10 +1,9 @@
 package com.endava.mmarko.pia.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import net.minidev.json.annotate.JsonIgnore;
-
 import javax.persistence.*;
 
 @Entity

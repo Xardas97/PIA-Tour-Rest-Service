@@ -70,8 +70,8 @@ public class GuideServiceTest {
     public void saveTest() {
         User user = new User();
 
-        Guide unsaved = new Guide(user, null);
-        Guide saved =  new Guide(user, null);
+        Guide unsaved = new Guide(user);
+        Guide saved =  new Guide(user);
         saved.setId(10);
 
         when(guideRepo.save(unsaved)).thenReturn(saved);

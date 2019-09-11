@@ -1,5 +1,6 @@
 package com.endava.mmarko.pia.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -20,6 +21,7 @@ public class Tour extends AbstractModel<Integer> {
     @Column(name = "min_people")
     private int minPeople;
     @ManyToMany(mappedBy = "myTours", fetch = FetchType.EAGER)
+    @JsonIgnore
     private List<Guide> myGuides;
 
     public Tour() {}

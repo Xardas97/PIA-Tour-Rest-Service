@@ -5,7 +5,6 @@ import com.endava.mmarko.pia.errors.UserNotFoundError;
 import com.endava.mmarko.pia.errors.WrongPasswordError;
 import com.endava.mmarko.pia.models.User;
 import com.endava.mmarko.pia.repositories.UserRepo;
-import com.endava.mmarko.pia.services.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

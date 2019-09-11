@@ -103,7 +103,7 @@ public class GuideControllerTest {
         byte[] unsavedJsonBytes = new ObjectMapper().
                 setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsBytes(guide);
 
-        when(guideService.save(any())).thenAnswer(i -> i.getArguments()[0]);
+        when(guideService.update(any())).thenAnswer(i -> i.getArguments()[0]);
 
         mockMvc.perform(put("/guides/{id}", ID )
                 .contentType(JSON_CONTENT_TYPE)
@@ -149,7 +149,7 @@ public class GuideControllerTest {
     }
 
     @Test
-    public void guideTest() throws Exception {
+    public void findTest() throws Exception {
         Guide guide = new Guide();
         guide.setId(ID);
         when(guideService.find(ID)).thenReturn(guide);
@@ -161,7 +161,7 @@ public class GuideControllerTest {
     }
 
     @Test
-    public void guideNotFoundTest() throws Exception {
+    public void findNotFoundTest() throws Exception {
         when(guideService.find(ID)).thenReturn(null);
 
         mockMvc.perform(get("/guides/{id}", ID))
@@ -171,7 +171,7 @@ public class GuideControllerTest {
     }
 
     @Test
-    public void guidesTest() throws Exception {
+    public void findAllTest() throws Exception {
         Guide guide1 = new Guide();
         guide1.setId(ID);
         Guide guide2 = new Guide();

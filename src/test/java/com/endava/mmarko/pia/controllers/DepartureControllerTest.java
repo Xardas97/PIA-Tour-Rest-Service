@@ -124,7 +124,7 @@ public class DepartureControllerTest {
     }
 
     @Test
-    public void departureTest() throws Exception {
+    public void findTest() throws Exception {
         Date date = new Date();
         Departure dep = new Departure(); dep.setDate(date);
         when(departureService.find(ID)).thenReturn(dep);
@@ -136,7 +136,7 @@ public class DepartureControllerTest {
     }
 
     @Test
-    public void departureNotFoundTest() throws Exception {
+    public void findNotFoundTest() throws Exception {
         Date date = new Date();
         Departure dep = new Departure(); dep.setDate(date);
 
@@ -147,7 +147,7 @@ public class DepartureControllerTest {
     }
 
     @Test
-    public void departuresTest() throws Exception {
+    public void findAllTest() throws Exception {
         List<Departure> departures = new LinkedList<>();
         Date date = new Date();
         Departure dep1 = new Departure();
