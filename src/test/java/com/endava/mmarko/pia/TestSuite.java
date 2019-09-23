@@ -5,7 +5,6 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        ConfigTestSuite.class,
         ControllerTestSuite.class,
         ServiceTestSuite.class
 })

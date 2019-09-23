@@ -109,7 +109,7 @@ public class UserControllerTest {
         mockMvc.perform(get("/users/{id}", ID))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(JSON_CONTENT_TYPE))
-                .andExpect(jsonPath("$.code", is(1)));
+                .andExpect(jsonPath("$.code", is(3)));
     }
 
     @Test

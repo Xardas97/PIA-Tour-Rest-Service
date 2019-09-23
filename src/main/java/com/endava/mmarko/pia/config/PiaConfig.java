@@ -1,6 +1,10 @@
 package com.endava.mmarko.pia.config;
 
 import com.endava.mmarko.pia.aspects.Logging;
+
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.*;
 import org.springframework.context.annotation.ComponentScan.Filter;
@@ -14,72 +18,70 @@ import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
 
 @Configuration
 @EnableJpaRepositories(basePackages = "com.endava.mmarko.pia.repositories")
 @EnableAspectJAutoProxy
-@ComponentScan(basePackages={"com.endava.mmarko.pia"},
-        excludeFilters={ @Filter(type= FilterType.ANNOTATION, value= EnableWebMvc.class) })
+@ComponentScan(basePackages = {"com.endava.mmarko.pia"},
+    excludeFilters = {@Filter(type = FilterType.ANNOTATION, value = EnableWebMvc.class)})
 public class PiaConfig {
-    @Bean
-    public Logging logging(){
-        return new Logging();
-    }
+  @Bean
+  public Logging logging() {
+    return new Logging();
+  }
 
-    @Bean
-    public BeanPostProcessor persistenceTranslator(){
-        return new PersistenceExceptionTranslationPostProcessor();
-    }
+  @Bean
+  public BeanPostProcessor persistenceTranslator() {
+    return new PersistenceExceptionTranslationPostProcessor();
+  }
 
-    @Bean
-    public DataSource dataSource(DataSourceConfigParams configParams){
-        DriverManagerDataSource dataSource =  new DriverManagerDataSource();
-        dataSource.setDriverClassName(configParams.driver);
-        dataSource.setUrl(configParams.url);
-        dataSource.setUsername(configParams.username);
-        dataSource.setPassword(configParams.password);
-        return dataSource;
-    }
+  @Bean
+  public DataSource dataSource(DataSourceConfigParams configParams) {
+    DriverManagerDataSource dataSource = new DriverManagerDataSource();
+    dataSource.setDriverClassName(configParams.driver);
+    dataSource.setUrl(configParams.url);
+    dataSource.setUsername(configParams.username);
+    dataSource.setPassword(configParams.password);
+    return dataSource;
+  }
 
-    @Bean
-    @Profile("dev")
-    DataSourceConfigParams mysqlDataSourceConfigParams(){
-        return new MySQLDataSourceConfigParams();
-    }
+  @Bean
+  @Profile("dev")
+  DataSourceConfigParams mysqlDataSourceConfigParams() {
+    return new MySqlDataSourceConfigParams();
+  }
 
-    @Bean
-    @Profile("prod")
-    DataSourceConfigParams sqlServerDataSourceConfigParams(){
-        return new SQLServerDataSourceConfigParams();
-    }
+  @Bean
+  @Profile("prod")
+  DataSourceConfigParams sqlServerDataSourceConfigParams() {
+    return new SqlServerDataSourceConfigParams();
+  }
 
-   @Bean
-    public JpaVendorAdapter jpaVendorAdapter(){
-       HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
-       adapter.setDatabase(Database.MYSQL);
-       adapter.setShowSql(false);
-       adapter.setGenerateDdl(false);
-       adapter.setDatabasePlatform("org.hibernate.dialect.MySQLDialect");
-       return adapter;
-   }
+  @Bean
+  public JpaVendorAdapter jpaVendorAdapter() {
+    HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
+    adapter.setDatabase(Database.MYSQL);
+    adapter.setShowSql(false);
+    adapter.setGenerateDdl(false);
+    adapter.setDatabasePlatform("org.hibernate.dialect.MySQLDialect");
+    return adapter;
+  }
 
-   @Bean
-   public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
-                                                                       JpaVendorAdapter jpaVendorAdapter){
+  @Bean
+  public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
+                                                                     JpaVendorAdapter jpaVendorAdapter) {
 
-        LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
-        emf.setDataSource(dataSource);
-        emf.setJpaVendorAdapter(jpaVendorAdapter);
-        emf.setPackagesToScan("com.endava.mmarko.pia.models");
-        return emf;
-   }
+    LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
+    emf.setDataSource(dataSource);
+    emf.setJpaVendorAdapter(jpaVendorAdapter);
+    emf.setPackagesToScan("com.endava.mmarko.pia.models");
+    return emf;
+  }
 
-    @Bean
-    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
-        return new JpaTransactionManager(entityManagerFactory);
-    }
+  @Bean
+  public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+    return new JpaTransactionManager(entityManagerFactory);
+  }
 
 
 }

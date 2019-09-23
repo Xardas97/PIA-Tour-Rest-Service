@@ -21,7 +21,7 @@ public class SQLServerTests {
     DataSourceConfigParams dataSourceConfigParams;
 
     @Test
-    public void successfulConnectionTest() {
+    public void prodProfileLoadsSqlServerConfig() {
         Assert.assertEquals(DRIVER, dataSourceConfigParams.driver);
         Assert.assertEquals(URL, dataSourceConfigParams.url);
         Assert.assertEquals(USERNAME, dataSourceConfigParams.username);

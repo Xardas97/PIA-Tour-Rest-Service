@@ -40,6 +40,7 @@ public class ReservationServiceTest {
     @Test
     public void findNotAllowedTest() {
         User user = new User();
+        user.setId(USER_ID);
         user.setUsername(USERNAME);
 
         User differentUser = new User();

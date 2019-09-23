@@ -1,5 +1,6 @@
 package com.endava.mmarko.pia.config;
 
+import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -11,34 +12,32 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import java.util.List;
 
 @Configuration
 @EnableWebMvc
 @ComponentScan("com.endava.mmarko.pia.controllers")
 public class WebConfig implements WebMvcConfigurer {
-    @Bean
-    public ViewResolver viewResolver() {
-        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-        resolver.setPrefix("/WEB-INF/views/");
-        resolver.setSuffix(".html");
-        resolver.setExposeContextBeansAsAttributes(true);
-        return resolver;
-    }
+  @Bean
+  public ViewResolver viewResolver() {
+    InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+    resolver.setPrefix("/WEB-INF/views/");
+    resolver.setSuffix(".html");
+    resolver.setExposeContextBeansAsAttributes(true);
+    return resolver;
+  }
 
-    @Bean
-    public MappingJackson2HttpMessageConverter jsonConverter(){
-        return new MappingJackson2HttpMessageConverter();
-    }
+  @Bean
+  public MappingJackson2HttpMessageConverter jsonConverter() {
+    return new MappingJackson2HttpMessageConverter();
+  }
 
-    @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(jsonConverter());
-    }
+  @Override
+  public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+    converters.add(jsonConverter());
+  }
 
-    @Override
-    public void configureDefaultServletHandling(
-            DefaultServletHandlerConfigurer configurer) {
-        configurer.enable();
-    }
+  @Override
+  public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+    configurer.enable();
+  }
 }

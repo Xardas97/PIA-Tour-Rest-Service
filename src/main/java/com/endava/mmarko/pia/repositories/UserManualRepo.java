@@ -3,17 +3,14 @@ package com.endava.mmarko.pia.repositories;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 @Repository
 @Transactional
 public class UserManualRepo {
 
-    @PersistenceContext
+    /*@PersistenceContext
     private EntityManager entityManager;
 
-    /*public void add(User user) {
+    public void add(User user) {
         entityManager.persist(user);
     }
 

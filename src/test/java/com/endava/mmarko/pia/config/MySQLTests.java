@@ -21,7 +21,7 @@ public class MySQLTests {
     DataSourceConfigParams dataSourceConfigParams;
 
     @Test
-    public void successfulConnectionTest() {
+    public void devProfileLoadsMySqlConfig() {
         Assert.assertEquals(DRIVER, dataSourceConfigParams.driver);
         Assert.assertEquals(URL, dataSourceConfigParams.url);
         Assert.assertEquals(USERNAME, dataSourceConfigParams.username);
